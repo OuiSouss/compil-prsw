@@ -18,16 +18,16 @@
 /* attributs NOE: noeud binaire (IfThEl est "binarise")                                */
 /* attributs TYP: contient un type                                                     */
 /* attributs LARGT: liste d'arguments types(var globales)                              */
-%type <NO> prog CA C E T F ET 
-%type <TYP> TP
-%type <LARGT> ARGT L_VART L_VARTNN
-/* Non-terminaux MP Ca C E T F Et TP Argt L_vart L_vartnn*/
-/* P:main_program; Ca:commande atomique; C:commande; E:expression; T:terme; F:facteur;*/
+%type <NO> prog atomic_cmd cmd expr T F typed_expr 
+%type <TYP> type_decl
+%type <LARGT> typed_arg block_decl_typed_var block_decl_non_nil_typed_var
+/* Non-terminaux MP Ca cmd expr T F Et type_decl Argt L_vart L_vartnn*/
+/* P:main_program; Ca:commande atomique; cmd:commande; expr:expression; T:terme; F:facteur;*/
 /* Et: expr tableau; */
-/* TP:TyPe; Argt:argument_type; */
+/* type_decl:TyPe; Argt:argument_type; */
 /* L_vart: Liste_variables_typees,   L_vartnn: Liste_variables_typees non-nil */
 %token <NO> I V Def Dep NFon NPro MP AF SK NEWAR SE IND IF TH EL VAR WH DO PL MO MU AND OR NOT LT EQ 
-%token <TYP> T_INT T_ERR T_BOT T_AR T_CMD
+%token <TYP> T_INT T_ERR T_AR T_CMD T_BOO
 
 /* Unités lexicales<NO>: Integer Variable Main_prog                            */
 /* Affectation Skip NewArrayOf                                                 */
@@ -38,109 +38,98 @@ Type_int Type_erreur Type_indefini  Type_array Type_commande                   *
 
 
 %%
-prog :  L_VART C            {benvty=$1;
-			   syntree=$2;
-			   YYACCEPT;}
-   ;
+prog:           block_decl_typed_var block_decl_call cmd    { benvty=$1;syntree=$3;YYACCEPT; };
 
-E : E PL T                {$$=Nalloc();
-                           $$->codop=PL;
-                           $$->FG=$1;
-                           $$->FD=$3;
-                           $$->ETIQ=malloc(2);
-                           strcpy($$->ETIQ,"+");}
-  | E MO T               {$$=Nalloc();
-                          $$->codop=MO;
-                          $$->FG=$1;
-                          $$->FD=$3;
-		          $$->ETIQ=malloc(2);
-                          strcpy($$->ETIQ,"-");}
-  | E OR T               {$$=Nalloc();
-                          $$->codop=OR;
-                          $$->FG=$1;
-                          $$->FD=$3;
-                          $$->ETIQ=malloc(2);
-                          strcpy($$->ETIQ,"Or");}
-  | E LT T               {$$=Nalloc();
-                          $$->codop=LT;
-                          $$->FG=$1;
-                          $$->FD=$3;
-                          $$->ETIQ=malloc(2);
-                          strcpy($$->ETIQ,"Lt");}
-  | E EQ T                {$$=Nalloc();
-                          $$->codop=EQ;
-                          $$->FG=$1;
-                          $$->FD=$3;
-                          $$->ETIQ=malloc(2);
-                          strcpy($$->ETIQ,"Eq");}
-  | T                    {$$=$1;}
-  ;
+expr:           expr PL T                                   { $$=Nalloc();
+                                                              $$->codop=PL;
+                                                              $$->FG=$1;
+                                                              $$->FD=$3;
+                                                              $$->ETIQ=malloc(2);
+                                                              strcpy($$->ETIQ,"+"); }
+                | expr MO T                                 { $$=Nalloc();
+                                                              $$->codop=MO;
+                                                              $$->FG=$1;
+                                                              $$->FD=$3;
+                                                              $$->ETIQ=malloc(2);
+                                                              strcpy($$->ETIQ,"-"); }
+                | expr OR T                                 { $$=Nalloc();
+                                                              $$->codop=OR;
+                                                              $$->FG=$1;
+                                                              $$->FD=$3;
+                                                              $$->ETIQ=malloc(2);
+                                                              strcpy($$->ETIQ,"Or"); }
+                | expr LT T                                 { $$=Nalloc();
+                                                              $$->codop=LT;
+                                                              $$->FG=$1;
+                                                              $$->FD=$3;
+                                                              $$->ETIQ=malloc(2);
+                                                              strcpy($$->ETIQ,"Lt"); }
+                | expr EQ T                                 { $$=Nalloc();
+                                                              $$->codop=EQ;
+                                                              $$->FG=$1;
+                                                              $$->FD=$3;
+                                                              $$->ETIQ=malloc(2);
+                                                              strcpy($$->ETIQ,"Eq");}
+                | T                                         { $$=$1; };
 
-T : T MU  F               {$$=Nalloc();
-                           $$->codop=MU;
-                           $$->FG=$1;
-                           $$->FD=$3;
-                           $$->ETIQ=malloc(2);
-                           strcpy($$->ETIQ,"*");}
+T:              T MU  F                                     { $$=Nalloc();
+                                                              $$->codop=MU;
+                                                              $$->FG=$1;
+                                                              $$->FD=$3;
+                                                              $$->ETIQ=malloc(2);
+                                                              strcpy($$->ETIQ,"*"); }
+                | T AND F                                   { $$=Nalloc();
+                                                              $$->codop=AND;
+                                                              $$->FG=$1;
+                                                              $$->FD=$3;
+                                                              $$->ETIQ=malloc(2);
+                                                              strcpy($$->ETIQ,"And"); }
+                | NOT F                                     { $$=Nalloc();
+                                                              $$->codop=NOT;
+                                                              $$->FG=$2;
+                                                              $$->FD=NULL;
+                                                              $$->ETIQ=malloc(2);
+                                                              strcpy($$->ETIQ,"Not");}
+                | F                                         { $$=$1; };
 
-  | T AND F               {$$=Nalloc();
-                           $$->codop=AND;
-                           $$->FG=$1;
-                           $$->FD=$3;
-                           $$->ETIQ=malloc(2);
-                           strcpy($$->ETIQ,"And");}
-  | NOT F                  {$$=Nalloc();
-                            $$->codop=NOT;
-			    $$->FG=$2;
-                            $$->FD=NULL;
-			    $$->ETIQ=malloc(2);
-                            strcpy($$->ETIQ,"Not");}
-  | F                      {$$=$1;}
-  ;
+F:              '(' expr ')'                                { $$=$2; }
+                | I                                         { $$=$1; } 
+                | V                                         { $$=$1; }
+                | BOOL                                      { }
+                | V '(' block_expr ')'                      { }
+                | NEWAR type_decl '[' expr ']'              { $$=Nalloc();
+                                                              $$->codop=NEWAR;
+                                                              /* calcul_type */
+                                                              type_copy(&($$->typno),$2); /* DIM,TYPEF sont connus   */
+                                                              ($$->typno).DIM++; /* mise a jour DIM                  */
+                                                              $$->FG=NULL;
+                                                              $$->FD=$4;/* TAILLE a calculer a partir de expr */}
+                | typed_expr                                { $$=$1; };
 
-F : '(' E ')'                  {$$=$2;}
-  | I                          {$$=$1;} 
-  | V                          {$$=$1;}
-  | NEWAR TP '[' E ']'         {$$=Nalloc();
-                                $$->codop=NEWAR;
-				/* calcul_type */
-      				type_copy(&($$->typno),$2); /* DIM,TYPEF sont connus   */
-				($$->typno).DIM++; /* mise a jour DIM                  */
-      				$$->FG=NULL;
-				$$->FD=$4;/* TAILLE a calculer a partir de E */}
-  | ET                          {$$=$1;}
-  ;
+typed_expr:     V  '[' expr ']'                             { $$=Nalloc();/* un seul indice                        */
+                                                              $$->codop=IND;
+                                                              $$->FG=$1;
+                                                              $$->FD=$3; }
+                | typed_expr '[' expr ']'                   { $$=Nalloc();/* plusieurs indices                     */
+                $$->codop=IND;
+                $$->FG=$1;
+                $$->FD=$3; };
 
-ET: V  '[' E ']'                {$$=Nalloc();/* un seul indice                        */
-                                $$->codop=IND;
-				$$->FG=$1;
-				$$->FD=$3;
-				}
-  | ET '[' E ']'                {$$=Nalloc();/* plusieurs indices                     */
-                                $$->codop=IND;
-				$$->FG=$1;
-				$$->FD=$3;
-                                }
-  ;
+cmd :           cmd SE atomic_cmd                           { $$=Nalloc();      /* sequence */
+                                                              $$->codop=SE;
+                                                              $$->FG=$1;
+                                                              $$->FD=$3;
+                                                              $$->ETIQ=malloc(2);
+                                                              strcpy($$->ETIQ,"Se"); }
+                | atomic_cmd                                { $$=$1; };
 
-C : C SE CA                     {$$=Nalloc();      /* sequence */
-                                 $$->codop=SE;
-                                 $$->FG=$1;
-                                 $$->FD=$3;
-                                 $$->ETIQ=malloc(2);
-                                 strcpy($$->ETIQ,"Se");
-                                 }    
-  | CA                          {$$=$1;}
-  ;
-
-CA : ET AF E            {$$=Nalloc();
-                        $$->codop=AF;
-                        $$->FG=$1;
-                        $$->FD=$3;
-                        $$->ETIQ=malloc(2);
-                        strcpy($$->ETIQ,"Af");
-			}
-  | V AF E              {$$=Nalloc();
+atomic_cmd:     typed_expr AF expr                          { $$=Nalloc();
+                                                              $$->codop=AF;
+                                                              $$->FG=$1;
+                                                              $$->FD=$3;
+                                                              $$->ETIQ=malloc(2);
+                                                              strcpy($$->ETIQ,"Af"); }
+                | V AF expr              {$$=Nalloc();
                         $$->codop=AF;
                         $$->FG=$1;
                         $$->FD=$3;
@@ -149,8 +138,8 @@ CA : ET AF E            {$$=Nalloc();
 
 			}
   | SK                  {$$=$1;}      
-  | '{' C '}'           {$$=$2;}     
-  | IF E TH C  EL CA    {$$=Nalloc();
+  | '{' cmd '}'           {$$=$2;}     
+  | IF expr TH cmd  EL atomic_cmd    {$$=Nalloc();
                         $$->codop=IF;
                         $$->FG=$2;         /* condition     */
                         $$->FD=Nalloc();   /* alternative   */
@@ -160,34 +149,51 @@ CA : ET AF E            {$$=Nalloc();
                         $$->ETIQ=malloc(2);
                         strcpy($$->ETIQ,"IfThEl");
                         }
-  | WH E DO CA         {$$=Nalloc();
+  | WH expr DO atomic_cmd         {$$=Nalloc();
                         $$->codop=WH;
                         $$->FG=$2;         /* condition d'entree dans le while */
                         $$->FD=$4;         /* corps du while                   */
                         $$->ETIQ=malloc(2);
                         strcpy($$->ETIQ,"Wh");
                          }
+  | V '(' block_expr ')' { }
   ;
 
 
+  block_expr:       %empty                      { }
+                    | block_non_nil_typed_expr {};
+ 
+block_non_nil_typed_expr:   expr {}
+                            | expr ',' block_non_nil_typed_expr {};
+                            
 /* un (ident, type) */ 
-ARGT:  V ':' TP         {$$ = creer_bilenvty(creer_envty($1->ETIQ, $3, 0));/* a ecrire */}
+typed_arg:  V ':' type_decl         {$$ = creer_bilenvty(creer_envty($1->ETIQ, $3, 0));/* a ecrire */}
     ;
     
 /* un type */
-TP: T_INT               {$$=$1;}
-  | T_AR TP             {$$=$2;$$.DIM++;}
+type_decl: T_BOO               {$$=$1;}
+  | T_INT               {$$=$1;}
+  | T_AR type_decl             {$$=$2;$$.DIM++;}
   ;
 
 /* table des variables globales  */
-L_VART: %empty           {$$=bilenvty_vide();}
-      | L_VARTNN         {$$=$1;}
+block_decl_typed_var: %empty           {$$=bilenvty_vide();}
+      | block_decl_non_nil_typed_var         {$$=$1;}
       ;
 
-L_VARTNN: VAR ARGT                {$$=$2;}
-| L_VARTNN ',' VAR ARGT           {$$ = $1; $$ = concatty($1, $4);}
+block_decl_non_nil_typed_var: VAR typed_arg                {$$=$2;}
+| block_decl_non_nil_typed_var ',' VAR typed_arg           {$$ = $1; $$ = concatty($1, $4);}
         ;
 
+block_def_proc:    DEP IDPROC '(' block_expr ')' {};
+
+block_def_func:     DEF IDFUNC '(' block_expr ')' ':' type_decl {};
+
+decl_def:  block_def_proc block_decl_typed_var cmd {}
+            | block_def_func block_decl_typed_var cmd {};
+
+list_def:   %empty {}
+                        | list_def decl_def {};
 %%
 
 #include "arbre.h"

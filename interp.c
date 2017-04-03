@@ -113,9 +113,9 @@ void semop_gp(BILENVTY rho_gb, NOE c)
 {char *lhs; int rhs; int cond;
  if(c != NULL)
     {switch(c->codop)
-       {case MP:
+       {/*case MP:
 	    semop_gp(rho_gb, c->FG);
-	    break;
+	    break;*/
 	case AF:
 	  if (c->FG->codop==V)        /* affectation a une variable */
 	    {lhs= c->FG->ETIQ;
