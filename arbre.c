@@ -179,7 +179,6 @@ char *nomop(int codop)
     case(T_AR): return("array_of ");
     case(T_INT): return("integer");
     case(T_CMD): return("commande");
-    case(T_BOT): return("typ_indefini");
     case(T_ERR): return("typ_erreur");  
     case(SE): return("Se");
     case(IND): return("Ind");  
