@@ -1,0 +1,90 @@
+\ifglsentryexists{Caltech}{}%
+{%
+\gls@defglossaryentry{Caltech}%
+{%
+name={CALTECH},%
+sort={CALTECH},%
+type={main},%
+first={CALTECH},%
+firstplural={CALTECHs},%
+text={CALTECH},%
+plural={CALTECHs},%
+description={California Institute of Technologie},%
+descriptionplural={California Institute of Technologie},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={},%
+longplural={},%
+short={},%
+shortplural={},%
+counter={page},%
+parent={},%
+%
+}%
+}%
+\ifglsentryexists{DMC++}{}%
+{%
+\gls@defglossaryentry{DMC++}%
+{%
+name={DMC++},%
+sort={DMC++},%
+type={main},%
+first={DMC++},%
+firstplural={DMC++s},%
+text={DMC++},%
+plural={DMC++s},%
+description={Digital Mars C++},%
+descriptionplural={Digital Mars C++},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={},%
+longplural={},%
+short={},%
+shortplural={},%
+counter={page},%
+parent={},%
+%
+}%
+}%
+\ifglsentryexists{DMD}{}%
+{%
+\gls@defglossaryentry{DMD}%
+{%
+name={DMD},%
+sort={DMD},%
+type={main},%
+first={DMD},%
+firstplural={DMDs},%
+text={DMD},%
+plural={DMDs},%
+description={Digital Mars D},%
+descriptionplural={Digital Mars D},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={},%
+longplural={},%
+short={},%
+shortplural={},%
+counter={page},%
+parent={},%
+%
+}%
+}%
