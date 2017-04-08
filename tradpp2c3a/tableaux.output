@@ -1,0 +1,1858 @@
+Terminaux inutilisés dans la grammaire
+
+   MP
+   AFC
+   IND
+   T_ERR
+   T_CMD
+
+
+Grammaire
+
+    0 $accept: prog $end
+
+    1 prog: block_decl_typed_var list_def cmd
+
+    2 expr: expr PL T
+    3     | expr MO T
+    4     | expr OR T
+    5     | expr LT T
+    6     | expr EQ T
+    7     | T
+
+    8 T: T MU F
+    9  | T AND F
+   10  | NOT F
+   11  | F
+
+   12 F: '(' expr ')'
+   13  | I
+   14  | V
+   15  | B
+   16  | V '(' block_expr ')'
+   17  | NEWAR type_decl '[' expr ']'
+   18  | typed_expr
+
+   19 typed_expr: V '[' expr ']'
+   20           | typed_expr '[' expr ']'
+
+   21 cmd: cmd SE atomic_cmd
+   22    | atomic_cmd
+
+   23 atomic_cmd: typed_expr AF expr
+   24           | V AF expr
+   25           | SK
+   26           | '{' cmd '}'
+   27           | IF expr TH cmd EL atomic_cmd
+   28           | WH expr DO atomic_cmd
+   29           | V '(' block_expr ')'
+
+   30 block_expr: %empty
+   31           | block_non_nil_typed_expr
+
+   32 block_non_nil_typed_expr: expr
+   33                         | expr ',' block_non_nil_typed_expr
+
+   34 typed_arg: V ':' type_decl
+
+   35 type_decl: T_BOO
+   36          | T_INT
+   37          | T_AR type_decl
+
+   38 block_decl_typed_var: %empty
+   39                     | block_decl_non_nil_typed_var
+
+   40 block_decl_non_nil_typed_var: VAR typed_arg
+   41                             | block_decl_non_nil_typed_var ',' VAR typed_arg
+
+   42 block_def_proc: DEP IDPROC '(' block_expr ')'
+
+   43 block_def_func: DEF IDFUNC '(' block_expr ')' ':' type_decl
+
+   44 decl_def: block_def_proc block_decl_typed_var cmd
+   45         | block_def_func block_decl_typed_var cmd
+
+   46 list_def: %empty
+   47         | list_def decl_def
+
+
+Terminaux, suivis des règles où ils apparaissent
+
+$end (0) 0
+'(' (40) 12 16 29 42 43
+')' (41) 12 16 29 42 43
+',' (44) 33 41
+':' (58) 34 43
+'[' (91) 17 19 20
+']' (93) 17 19 20
+'{' (123) 26
+'}' (125) 26
+error (256)
+I (258) 13
+B (259) 15
+V (260) 14 16 19 24 29 34
+DEF (261) 43
+DEP (262) 42
+IDPROC (263) 42
+IDFUNC (264) 43
+MP (265)
+AF (266) 23 24
+AFC (267)
+SK (268) 25
+NEWAR (269) 17
+SE (270) 21
+IND (271)
+IF (272) 27
+TH (273) 27
+EL (274) 27
+VAR (275) 40 41
+WH (276) 28
+DO (277) 28
+PL (278) 2
+MO (279) 3
+MU (280) 8
+AND (281) 9
+OR (282) 4
+NOT (283) 10
+LT (284) 5
+EQ (285) 6
+T_INT (286) 36
+T_ERR (287)
+T_AR (288) 37
+T_CMD (289)
+T_BOO (290) 35
+
+
+Non-terminaux, suivis des règles où ils apparaissent
+
+$accept (44)
+    à gauche: 0
+prog (45)
+    à gauche: 1, à droite: 0
+expr (46)
+    à gauche: 2 3 4 5 6 7, à droite: 2 3 4 5 6 12 17 19 20 23 24
+    27 28 32 33
+T (47)
+    à gauche: 8 9 10 11, à droite: 2 3 4 5 6 7 8 9
+F (48)
+    à gauche: 12 13 14 15 16 17 18, à droite: 8 9 10 11
+typed_expr (49)
+    à gauche: 19 20, à droite: 18 20 23
+cmd (50)
+    à gauche: 21 22, à droite: 1 21 26 27 44 45
+atomic_cmd (51)
+    à gauche: 23 24 25 26 27 28 29, à droite: 21 22 27 28
+block_expr (52)
+    à gauche: 30 31, à droite: 16 29 42 43
+block_non_nil_typed_expr (53)
+    à gauche: 32 33, à droite: 31 33
+typed_arg (54)
+    à gauche: 34, à droite: 40 41
+type_decl (55)
+    à gauche: 35 36 37, à droite: 17 34 37 43
+block_decl_typed_var (56)
+    à gauche: 38 39, à droite: 1 44 45
+block_decl_non_nil_typed_var (57)
+    à gauche: 40 41, à droite: 39 41
+block_def_proc (58)
+    à gauche: 42, à droite: 44
+block_def_func (59)
+    à gauche: 43, à droite: 45
+decl_def (60)
+    à gauche: 44 45, à droite: 47
+list_def (61)
+    à gauche: 46 47, à droite: 1 47
+
+
+État 0
+
+    0 $accept: . prog $end
+    1 prog: . block_decl_typed_var list_def cmd
+   38 block_decl_typed_var: . %empty  [V, DEF, DEP, SK, IF, WH, '{']
+   39                     | . block_decl_non_nil_typed_var
+   40 block_decl_non_nil_typed_var: . VAR typed_arg
+   41                             | . block_decl_non_nil_typed_var ',' VAR typed_arg
+
+    VAR  décalage et aller à l'état 1
+
+    $défaut  réduction par utilisation de la règle 38 (block_decl_typed_var)
+
+    prog                          aller à l'état 2
+    block_decl_typed_var          aller à l'état 3
+    block_decl_non_nil_typed_var  aller à l'état 4
+
+
+État 1
+
+   34 typed_arg: . V ':' type_decl
+   40 block_decl_non_nil_typed_var: VAR . typed_arg
+
+    V  décalage et aller à l'état 5
+
+    typed_arg  aller à l'état 6
+
+
+État 2
+
+    0 $accept: prog . $end
+
+    $end  décalage et aller à l'état 7
+
+
+État 3
+
+    1 prog: block_decl_typed_var . list_def cmd
+   46 list_def: . %empty
+   47         | . list_def decl_def
+
+    $défaut  réduction par utilisation de la règle 46 (list_def)
+
+    list_def  aller à l'état 8
+
+
+État 4
+
+   39 block_decl_typed_var: block_decl_non_nil_typed_var .  [V, DEF, DEP, SK, IF, WH, '{']
+   41 block_decl_non_nil_typed_var: block_decl_non_nil_typed_var . ',' VAR typed_arg
+
+    ','  décalage et aller à l'état 9
+
+    $défaut  réduction par utilisation de la règle 39 (block_decl_typed_var)
+
+
+État 5
+
+   34 typed_arg: V . ':' type_decl
+
+    ':'  décalage et aller à l'état 10
+
+
+État 6
+
+   40 block_decl_non_nil_typed_var: VAR typed_arg .
+
+    $défaut  réduction par utilisation de la règle 40 (block_decl_non_nil_typed_var)
+
+
+État 7
+
+    0 $accept: prog $end .
+
+    $défaut  accepter
+
+
+État 8
+
+    1 prog: block_decl_typed_var list_def . cmd
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+   21 cmd: . cmd SE atomic_cmd
+   22    | . atomic_cmd
+   23 atomic_cmd: . typed_expr AF expr
+   24           | . V AF expr
+   25           | . SK
+   26           | . '{' cmd '}'
+   27           | . IF expr TH cmd EL atomic_cmd
+   28           | . WH expr DO atomic_cmd
+   29           | . V '(' block_expr ')'
+   42 block_def_proc: . DEP IDPROC '(' block_expr ')'
+   43 block_def_func: . DEF IDFUNC '(' block_expr ')' ':' type_decl
+   44 decl_def: . block_def_proc block_decl_typed_var cmd
+   45         | . block_def_func block_decl_typed_var cmd
+   47 list_def: list_def . decl_def
+
+    V    décalage et aller à l'état 11
+    DEF  décalage et aller à l'état 12
+    DEP  décalage et aller à l'état 13
+    SK   décalage et aller à l'état 14
+    IF   décalage et aller à l'état 15
+    WH   décalage et aller à l'état 16
+    '{'  décalage et aller à l'état 17
+
+    typed_expr      aller à l'état 18
+    cmd             aller à l'état 19
+    atomic_cmd      aller à l'état 20
+    block_def_proc  aller à l'état 21
+    block_def_func  aller à l'état 22
+    decl_def        aller à l'état 23
+
+
+État 9
+
+   41 block_decl_non_nil_typed_var: block_decl_non_nil_typed_var ',' . VAR typed_arg
+
+    VAR  décalage et aller à l'état 24
+
+
+État 10
+
+   34 typed_arg: V ':' . type_decl
+   35 type_decl: . T_BOO
+   36          | . T_INT
+   37          | . T_AR type_decl
+
+    T_INT  décalage et aller à l'état 25
+    T_AR   décalage et aller à l'état 26
+    T_BOO  décalage et aller à l'état 27
+
+    type_decl  aller à l'état 28
+
+
+État 11
+
+   19 typed_expr: V . '[' expr ']'
+   24 atomic_cmd: V . AF expr
+   29           | V . '(' block_expr ')'
+
+    AF   décalage et aller à l'état 29
+    '('  décalage et aller à l'état 30
+    '['  décalage et aller à l'état 31
+
+
+État 12
+
+   43 block_def_func: DEF . IDFUNC '(' block_expr ')' ':' type_decl
+
+    IDFUNC  décalage et aller à l'état 32
+
+
+État 13
+
+   42 block_def_proc: DEP . IDPROC '(' block_expr ')'
+
+    IDPROC  décalage et aller à l'état 33
+
+
+État 14
+
+   25 atomic_cmd: SK .
+
+    $défaut  réduction par utilisation de la règle 25 (atomic_cmd)
+
+
+État 15
+
+    2 expr: . expr PL T
+    3     | . expr MO T
+    4     | . expr OR T
+    5     | . expr LT T
+    6     | . expr EQ T
+    7     | . T
+    8 T: . T MU F
+    9  | . T AND F
+   10  | . NOT F
+   11  | . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+   27 atomic_cmd: IF . expr TH cmd EL atomic_cmd
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    NOT    décalage et aller à l'état 38
+    '('    décalage et aller à l'état 39
+
+    expr        aller à l'état 40
+    T           aller à l'état 41
+    F           aller à l'état 42
+    typed_expr  aller à l'état 43
+
+
+État 16
+
+    2 expr: . expr PL T
+    3     | . expr MO T
+    4     | . expr OR T
+    5     | . expr LT T
+    6     | . expr EQ T
+    7     | . T
+    8 T: . T MU F
+    9  | . T AND F
+   10  | . NOT F
+   11  | . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+   28 atomic_cmd: WH . expr DO atomic_cmd
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    NOT    décalage et aller à l'état 38
+    '('    décalage et aller à l'état 39
+
+    expr        aller à l'état 44
+    T           aller à l'état 41
+    F           aller à l'état 42
+    typed_expr  aller à l'état 43
+
+
+État 17
+
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+   21 cmd: . cmd SE atomic_cmd
+   22    | . atomic_cmd
+   23 atomic_cmd: . typed_expr AF expr
+   24           | . V AF expr
+   25           | . SK
+   26           | . '{' cmd '}'
+   26           | '{' . cmd '}'
+   27           | . IF expr TH cmd EL atomic_cmd
+   28           | . WH expr DO atomic_cmd
+   29           | . V '(' block_expr ')'
+
+    V    décalage et aller à l'état 11
+    SK   décalage et aller à l'état 14
+    IF   décalage et aller à l'état 15
+    WH   décalage et aller à l'état 16
+    '{'  décalage et aller à l'état 17
+
+    typed_expr  aller à l'état 18
+    cmd         aller à l'état 45
+    atomic_cmd  aller à l'état 20
+
+
+État 18
+
+   20 typed_expr: typed_expr . '[' expr ']'
+   23 atomic_cmd: typed_expr . AF expr
+
+    AF   décalage et aller à l'état 46
+    '['  décalage et aller à l'état 47
+
+
+État 19
+
+    1 prog: block_decl_typed_var list_def cmd .  [$end]
+   21 cmd: cmd . SE atomic_cmd
+
+    SE  décalage et aller à l'état 48
+
+    $défaut  réduction par utilisation de la règle 1 (prog)
+
+
+État 20
+
+   22 cmd: atomic_cmd .
+
+    $défaut  réduction par utilisation de la règle 22 (cmd)
+
+
+État 21
+
+   38 block_decl_typed_var: . %empty  [V, SK, IF, WH, '{']
+   39                     | . block_decl_non_nil_typed_var
+   40 block_decl_non_nil_typed_var: . VAR typed_arg
+   41                             | . block_decl_non_nil_typed_var ',' VAR typed_arg
+   44 decl_def: block_def_proc . block_decl_typed_var cmd
+
+    VAR  décalage et aller à l'état 1
+
+    $défaut  réduction par utilisation de la règle 38 (block_decl_typed_var)
+
+    block_decl_typed_var          aller à l'état 49
+    block_decl_non_nil_typed_var  aller à l'état 4
+
+
+État 22
+
+   38 block_decl_typed_var: . %empty  [V, SK, IF, WH, '{']
+   39                     | . block_decl_non_nil_typed_var
+   40 block_decl_non_nil_typed_var: . VAR typed_arg
+   41                             | . block_decl_non_nil_typed_var ',' VAR typed_arg
+   45 decl_def: block_def_func . block_decl_typed_var cmd
+
+    VAR  décalage et aller à l'état 1
+
+    $défaut  réduction par utilisation de la règle 38 (block_decl_typed_var)
+
+    block_decl_typed_var          aller à l'état 50
+    block_decl_non_nil_typed_var  aller à l'état 4
+
+
+État 23
+
+   47 list_def: list_def decl_def .
+
+    $défaut  réduction par utilisation de la règle 47 (list_def)
+
+
+État 24
+
+   34 typed_arg: . V ':' type_decl
+   41 block_decl_non_nil_typed_var: block_decl_non_nil_typed_var ',' VAR . typed_arg
+
+    V  décalage et aller à l'état 5
+
+    typed_arg  aller à l'état 51
+
+
+État 25
+
+   36 type_decl: T_INT .
+
+    $défaut  réduction par utilisation de la règle 36 (type_decl)
+
+
+État 26
+
+   35 type_decl: . T_BOO
+   36          | . T_INT
+   37          | . T_AR type_decl
+   37          | T_AR . type_decl
+
+    T_INT  décalage et aller à l'état 25
+    T_AR   décalage et aller à l'état 26
+    T_BOO  décalage et aller à l'état 27
+
+    type_decl  aller à l'état 52
+
+
+État 27
+
+   35 type_decl: T_BOO .
+
+    $défaut  réduction par utilisation de la règle 35 (type_decl)
+
+
+État 28
+
+   34 typed_arg: V ':' type_decl .
+
+    $défaut  réduction par utilisation de la règle 34 (typed_arg)
+
+
+État 29
+
+    2 expr: . expr PL T
+    3     | . expr MO T
+    4     | . expr OR T
+    5     | . expr LT T
+    6     | . expr EQ T
+    7     | . T
+    8 T: . T MU F
+    9  | . T AND F
+   10  | . NOT F
+   11  | . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+   24 atomic_cmd: V AF . expr
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    NOT    décalage et aller à l'état 38
+    '('    décalage et aller à l'état 39
+
+    expr        aller à l'état 53
+    T           aller à l'état 41
+    F           aller à l'état 42
+    typed_expr  aller à l'état 43
+
+
+État 30
+
+    2 expr: . expr PL T
+    3     | . expr MO T
+    4     | . expr OR T
+    5     | . expr LT T
+    6     | . expr EQ T
+    7     | . T
+    8 T: . T MU F
+    9  | . T AND F
+   10  | . NOT F
+   11  | . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+   29 atomic_cmd: V '(' . block_expr ')'
+   30 block_expr: . %empty  [')']
+   31           | . block_non_nil_typed_expr
+   32 block_non_nil_typed_expr: . expr
+   33                         | . expr ',' block_non_nil_typed_expr
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    NOT    décalage et aller à l'état 38
+    '('    décalage et aller à l'état 39
+
+    $défaut  réduction par utilisation de la règle 30 (block_expr)
+
+    expr                      aller à l'état 54
+    T                         aller à l'état 41
+    F                         aller à l'état 42
+    typed_expr                aller à l'état 43
+    block_expr                aller à l'état 55
+    block_non_nil_typed_expr  aller à l'état 56
+
+
+État 31
+
+    2 expr: . expr PL T
+    3     | . expr MO T
+    4     | . expr OR T
+    5     | . expr LT T
+    6     | . expr EQ T
+    7     | . T
+    8 T: . T MU F
+    9  | . T AND F
+   10  | . NOT F
+   11  | . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   19           | V '[' . expr ']'
+   20           | . typed_expr '[' expr ']'
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    NOT    décalage et aller à l'état 38
+    '('    décalage et aller à l'état 39
+
+    expr        aller à l'état 57
+    T           aller à l'état 41
+    F           aller à l'état 42
+    typed_expr  aller à l'état 43
+
+
+État 32
+
+   43 block_def_func: DEF IDFUNC . '(' block_expr ')' ':' type_decl
+
+    '('  décalage et aller à l'état 58
+
+
+État 33
+
+   42 block_def_proc: DEP IDPROC . '(' block_expr ')'
+
+    '('  décalage et aller à l'état 59
+
+
+État 34
+
+   13 F: I .
+
+    $défaut  réduction par utilisation de la règle 13 (F)
+
+
+État 35
+
+   15 F: B .
+
+    $défaut  réduction par utilisation de la règle 15 (F)
+
+
+État 36
+
+   14 F: V .  [$end, V, DEF, DEP, SK, SE, IF, TH, EL, WH, DO, PL, MO, MU, AND, OR, LT, EQ, ')', ']', '{', '}', ',']
+   16  | V . '(' block_expr ')'
+   19 typed_expr: V . '[' expr ']'
+
+    '('  décalage et aller à l'état 60
+    '['  décalage et aller à l'état 31
+
+    $défaut  réduction par utilisation de la règle 14 (F)
+
+
+État 37
+
+   17 F: NEWAR . type_decl '[' expr ']'
+   35 type_decl: . T_BOO
+   36          | . T_INT
+   37          | . T_AR type_decl
+
+    T_INT  décalage et aller à l'état 25
+    T_AR   décalage et aller à l'état 26
+    T_BOO  décalage et aller à l'état 27
+
+    type_decl  aller à l'état 61
+
+
+État 38
+
+   10 T: NOT . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    '('    décalage et aller à l'état 39
+
+    F           aller à l'état 62
+    typed_expr  aller à l'état 43
+
+
+État 39
+
+    2 expr: . expr PL T
+    3     | . expr MO T
+    4     | . expr OR T
+    5     | . expr LT T
+    6     | . expr EQ T
+    7     | . T
+    8 T: . T MU F
+    9  | . T AND F
+   10  | . NOT F
+   11  | . F
+   12 F: . '(' expr ')'
+   12  | '(' . expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    NOT    décalage et aller à l'état 38
+    '('    décalage et aller à l'état 39
+
+    expr        aller à l'état 63
+    T           aller à l'état 41
+    F           aller à l'état 42
+    typed_expr  aller à l'état 43
+
+
+État 40
+
+    2 expr: expr . PL T
+    3     | expr . MO T
+    4     | expr . OR T
+    5     | expr . LT T
+    6     | expr . EQ T
+   27 atomic_cmd: IF expr . TH cmd EL atomic_cmd
+
+    TH  décalage et aller à l'état 64
+    PL  décalage et aller à l'état 65
+    MO  décalage et aller à l'état 66
+    OR  décalage et aller à l'état 67
+    LT  décalage et aller à l'état 68
+    EQ  décalage et aller à l'état 69
+
+
+État 41
+
+    7 expr: T .  [$end, V, DEF, DEP, SK, SE, IF, TH, EL, WH, DO, PL, MO, OR, LT, EQ, ')', ']', '{', '}', ',']
+    8 T: T . MU F
+    9  | T . AND F
+
+    MU   décalage et aller à l'état 70
+    AND  décalage et aller à l'état 71
+
+    $défaut  réduction par utilisation de la règle 7 (expr)
+
+
+État 42
+
+   11 T: F .
+
+    $défaut  réduction par utilisation de la règle 11 (T)
+
+
+État 43
+
+   18 F: typed_expr .  [$end, V, DEF, DEP, SK, SE, IF, TH, EL, WH, DO, PL, MO, MU, AND, OR, LT, EQ, ')', ']', '{', '}', ',']
+   20 typed_expr: typed_expr . '[' expr ']'
+
+    '['  décalage et aller à l'état 47
+
+    $défaut  réduction par utilisation de la règle 18 (F)
+
+
+État 44
+
+    2 expr: expr . PL T
+    3     | expr . MO T
+    4     | expr . OR T
+    5     | expr . LT T
+    6     | expr . EQ T
+   28 atomic_cmd: WH expr . DO atomic_cmd
+
+    DO  décalage et aller à l'état 72
+    PL  décalage et aller à l'état 65
+    MO  décalage et aller à l'état 66
+    OR  décalage et aller à l'état 67
+    LT  décalage et aller à l'état 68
+    EQ  décalage et aller à l'état 69
+
+
+État 45
+
+   21 cmd: cmd . SE atomic_cmd
+   26 atomic_cmd: '{' cmd . '}'
+
+    SE   décalage et aller à l'état 48
+    '}'  décalage et aller à l'état 73
+
+
+État 46
+
+    2 expr: . expr PL T
+    3     | . expr MO T
+    4     | . expr OR T
+    5     | . expr LT T
+    6     | . expr EQ T
+    7     | . T
+    8 T: . T MU F
+    9  | . T AND F
+   10  | . NOT F
+   11  | . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+   23 atomic_cmd: typed_expr AF . expr
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    NOT    décalage et aller à l'état 38
+    '('    décalage et aller à l'état 39
+
+    expr        aller à l'état 74
+    T           aller à l'état 41
+    F           aller à l'état 42
+    typed_expr  aller à l'état 43
+
+
+État 47
+
+    2 expr: . expr PL T
+    3     | . expr MO T
+    4     | . expr OR T
+    5     | . expr LT T
+    6     | . expr EQ T
+    7     | . T
+    8 T: . T MU F
+    9  | . T AND F
+   10  | . NOT F
+   11  | . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+   20           | typed_expr '[' . expr ']'
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    NOT    décalage et aller à l'état 38
+    '('    décalage et aller à l'état 39
+
+    expr        aller à l'état 75
+    T           aller à l'état 41
+    F           aller à l'état 42
+    typed_expr  aller à l'état 43
+
+
+État 48
+
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+   21 cmd: cmd SE . atomic_cmd
+   23 atomic_cmd: . typed_expr AF expr
+   24           | . V AF expr
+   25           | . SK
+   26           | . '{' cmd '}'
+   27           | . IF expr TH cmd EL atomic_cmd
+   28           | . WH expr DO atomic_cmd
+   29           | . V '(' block_expr ')'
+
+    V    décalage et aller à l'état 11
+    SK   décalage et aller à l'état 14
+    IF   décalage et aller à l'état 15
+    WH   décalage et aller à l'état 16
+    '{'  décalage et aller à l'état 17
+
+    typed_expr  aller à l'état 18
+    atomic_cmd  aller à l'état 76
+
+
+État 49
+
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+   21 cmd: . cmd SE atomic_cmd
+   22    | . atomic_cmd
+   23 atomic_cmd: . typed_expr AF expr
+   24           | . V AF expr
+   25           | . SK
+   26           | . '{' cmd '}'
+   27           | . IF expr TH cmd EL atomic_cmd
+   28           | . WH expr DO atomic_cmd
+   29           | . V '(' block_expr ')'
+   44 decl_def: block_def_proc block_decl_typed_var . cmd
+
+    V    décalage et aller à l'état 11
+    SK   décalage et aller à l'état 14
+    IF   décalage et aller à l'état 15
+    WH   décalage et aller à l'état 16
+    '{'  décalage et aller à l'état 17
+
+    typed_expr  aller à l'état 18
+    cmd         aller à l'état 77
+    atomic_cmd  aller à l'état 20
+
+
+État 50
+
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+   21 cmd: . cmd SE atomic_cmd
+   22    | . atomic_cmd
+   23 atomic_cmd: . typed_expr AF expr
+   24           | . V AF expr
+   25           | . SK
+   26           | . '{' cmd '}'
+   27           | . IF expr TH cmd EL atomic_cmd
+   28           | . WH expr DO atomic_cmd
+   29           | . V '(' block_expr ')'
+   45 decl_def: block_def_func block_decl_typed_var . cmd
+
+    V    décalage et aller à l'état 11
+    SK   décalage et aller à l'état 14
+    IF   décalage et aller à l'état 15
+    WH   décalage et aller à l'état 16
+    '{'  décalage et aller à l'état 17
+
+    typed_expr  aller à l'état 18
+    cmd         aller à l'état 78
+    atomic_cmd  aller à l'état 20
+
+
+État 51
+
+   41 block_decl_non_nil_typed_var: block_decl_non_nil_typed_var ',' VAR typed_arg .
+
+    $défaut  réduction par utilisation de la règle 41 (block_decl_non_nil_typed_var)
+
+
+État 52
+
+   37 type_decl: T_AR type_decl .
+
+    $défaut  réduction par utilisation de la règle 37 (type_decl)
+
+
+État 53
+
+    2 expr: expr . PL T
+    3     | expr . MO T
+    4     | expr . OR T
+    5     | expr . LT T
+    6     | expr . EQ T
+   24 atomic_cmd: V AF expr .  [$end, V, DEF, DEP, SK, SE, IF, EL, WH, '{', '}']
+
+    PL  décalage et aller à l'état 65
+    MO  décalage et aller à l'état 66
+    OR  décalage et aller à l'état 67
+    LT  décalage et aller à l'état 68
+    EQ  décalage et aller à l'état 69
+
+    $défaut  réduction par utilisation de la règle 24 (atomic_cmd)
+
+
+État 54
+
+    2 expr: expr . PL T
+    3     | expr . MO T
+    4     | expr . OR T
+    5     | expr . LT T
+    6     | expr . EQ T
+   32 block_non_nil_typed_expr: expr .  [')']
+   33                         | expr . ',' block_non_nil_typed_expr
+
+    PL   décalage et aller à l'état 65
+    MO   décalage et aller à l'état 66
+    OR   décalage et aller à l'état 67
+    LT   décalage et aller à l'état 68
+    EQ   décalage et aller à l'état 69
+    ','  décalage et aller à l'état 79
+
+    $défaut  réduction par utilisation de la règle 32 (block_non_nil_typed_expr)
+
+
+État 55
+
+   29 atomic_cmd: V '(' block_expr . ')'
+
+    ')'  décalage et aller à l'état 80
+
+
+État 56
+
+   31 block_expr: block_non_nil_typed_expr .
+
+    $défaut  réduction par utilisation de la règle 31 (block_expr)
+
+
+État 57
+
+    2 expr: expr . PL T
+    3     | expr . MO T
+    4     | expr . OR T
+    5     | expr . LT T
+    6     | expr . EQ T
+   19 typed_expr: V '[' expr . ']'
+
+    PL   décalage et aller à l'état 65
+    MO   décalage et aller à l'état 66
+    OR   décalage et aller à l'état 67
+    LT   décalage et aller à l'état 68
+    EQ   décalage et aller à l'état 69
+    ']'  décalage et aller à l'état 81
+
+
+État 58
+
+    2 expr: . expr PL T
+    3     | . expr MO T
+    4     | . expr OR T
+    5     | . expr LT T
+    6     | . expr EQ T
+    7     | . T
+    8 T: . T MU F
+    9  | . T AND F
+   10  | . NOT F
+   11  | . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+   30 block_expr: . %empty  [')']
+   31           | . block_non_nil_typed_expr
+   32 block_non_nil_typed_expr: . expr
+   33                         | . expr ',' block_non_nil_typed_expr
+   43 block_def_func: DEF IDFUNC '(' . block_expr ')' ':' type_decl
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    NOT    décalage et aller à l'état 38
+    '('    décalage et aller à l'état 39
+
+    $défaut  réduction par utilisation de la règle 30 (block_expr)
+
+    expr                      aller à l'état 54
+    T                         aller à l'état 41
+    F                         aller à l'état 42
+    typed_expr                aller à l'état 43
+    block_expr                aller à l'état 82
+    block_non_nil_typed_expr  aller à l'état 56
+
+
+État 59
+
+    2 expr: . expr PL T
+    3     | . expr MO T
+    4     | . expr OR T
+    5     | . expr LT T
+    6     | . expr EQ T
+    7     | . T
+    8 T: . T MU F
+    9  | . T AND F
+   10  | . NOT F
+   11  | . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+   30 block_expr: . %empty  [')']
+   31           | . block_non_nil_typed_expr
+   32 block_non_nil_typed_expr: . expr
+   33                         | . expr ',' block_non_nil_typed_expr
+   42 block_def_proc: DEP IDPROC '(' . block_expr ')'
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    NOT    décalage et aller à l'état 38
+    '('    décalage et aller à l'état 39
+
+    $défaut  réduction par utilisation de la règle 30 (block_expr)
+
+    expr                      aller à l'état 54
+    T                         aller à l'état 41
+    F                         aller à l'état 42
+    typed_expr                aller à l'état 43
+    block_expr                aller à l'état 83
+    block_non_nil_typed_expr  aller à l'état 56
+
+
+État 60
+
+    2 expr: . expr PL T
+    3     | . expr MO T
+    4     | . expr OR T
+    5     | . expr LT T
+    6     | . expr EQ T
+    7     | . T
+    8 T: . T MU F
+    9  | . T AND F
+   10  | . NOT F
+   11  | . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   16  | V '(' . block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+   30 block_expr: . %empty  [')']
+   31           | . block_non_nil_typed_expr
+   32 block_non_nil_typed_expr: . expr
+   33                         | . expr ',' block_non_nil_typed_expr
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    NOT    décalage et aller à l'état 38
+    '('    décalage et aller à l'état 39
+
+    $défaut  réduction par utilisation de la règle 30 (block_expr)
+
+    expr                      aller à l'état 54
+    T                         aller à l'état 41
+    F                         aller à l'état 42
+    typed_expr                aller à l'état 43
+    block_expr                aller à l'état 84
+    block_non_nil_typed_expr  aller à l'état 56
+
+
+État 61
+
+   17 F: NEWAR type_decl . '[' expr ']'
+
+    '['  décalage et aller à l'état 85
+
+
+État 62
+
+   10 T: NOT F .
+
+    $défaut  réduction par utilisation de la règle 10 (T)
+
+
+État 63
+
+    2 expr: expr . PL T
+    3     | expr . MO T
+    4     | expr . OR T
+    5     | expr . LT T
+    6     | expr . EQ T
+   12 F: '(' expr . ')'
+
+    PL   décalage et aller à l'état 65
+    MO   décalage et aller à l'état 66
+    OR   décalage et aller à l'état 67
+    LT   décalage et aller à l'état 68
+    EQ   décalage et aller à l'état 69
+    ')'  décalage et aller à l'état 86
+
+
+État 64
+
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+   21 cmd: . cmd SE atomic_cmd
+   22    | . atomic_cmd
+   23 atomic_cmd: . typed_expr AF expr
+   24           | . V AF expr
+   25           | . SK
+   26           | . '{' cmd '}'
+   27           | . IF expr TH cmd EL atomic_cmd
+   27           | IF expr TH . cmd EL atomic_cmd
+   28           | . WH expr DO atomic_cmd
+   29           | . V '(' block_expr ')'
+
+    V    décalage et aller à l'état 11
+    SK   décalage et aller à l'état 14
+    IF   décalage et aller à l'état 15
+    WH   décalage et aller à l'état 16
+    '{'  décalage et aller à l'état 17
+
+    typed_expr  aller à l'état 18
+    cmd         aller à l'état 87
+    atomic_cmd  aller à l'état 20
+
+
+État 65
+
+    2 expr: expr PL . T
+    8 T: . T MU F
+    9  | . T AND F
+   10  | . NOT F
+   11  | . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    NOT    décalage et aller à l'état 38
+    '('    décalage et aller à l'état 39
+
+    T           aller à l'état 88
+    F           aller à l'état 42
+    typed_expr  aller à l'état 43
+
+
+État 66
+
+    3 expr: expr MO . T
+    8 T: . T MU F
+    9  | . T AND F
+   10  | . NOT F
+   11  | . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    NOT    décalage et aller à l'état 38
+    '('    décalage et aller à l'état 39
+
+    T           aller à l'état 89
+    F           aller à l'état 42
+    typed_expr  aller à l'état 43
+
+
+État 67
+
+    4 expr: expr OR . T
+    8 T: . T MU F
+    9  | . T AND F
+   10  | . NOT F
+   11  | . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    NOT    décalage et aller à l'état 38
+    '('    décalage et aller à l'état 39
+
+    T           aller à l'état 90
+    F           aller à l'état 42
+    typed_expr  aller à l'état 43
+
+
+État 68
+
+    5 expr: expr LT . T
+    8 T: . T MU F
+    9  | . T AND F
+   10  | . NOT F
+   11  | . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    NOT    décalage et aller à l'état 38
+    '('    décalage et aller à l'état 39
+
+    T           aller à l'état 91
+    F           aller à l'état 42
+    typed_expr  aller à l'état 43
+
+
+État 69
+
+    6 expr: expr EQ . T
+    8 T: . T MU F
+    9  | . T AND F
+   10  | . NOT F
+   11  | . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    NOT    décalage et aller à l'état 38
+    '('    décalage et aller à l'état 39
+
+    T           aller à l'état 92
+    F           aller à l'état 42
+    typed_expr  aller à l'état 43
+
+
+État 70
+
+    8 T: T MU . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    '('    décalage et aller à l'état 39
+
+    F           aller à l'état 93
+    typed_expr  aller à l'état 43
+
+
+État 71
+
+    9 T: T AND . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    '('    décalage et aller à l'état 39
+
+    F           aller à l'état 94
+    typed_expr  aller à l'état 43
+
+
+État 72
+
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+   23 atomic_cmd: . typed_expr AF expr
+   24           | . V AF expr
+   25           | . SK
+   26           | . '{' cmd '}'
+   27           | . IF expr TH cmd EL atomic_cmd
+   28           | . WH expr DO atomic_cmd
+   28           | WH expr DO . atomic_cmd
+   29           | . V '(' block_expr ')'
+
+    V    décalage et aller à l'état 11
+    SK   décalage et aller à l'état 14
+    IF   décalage et aller à l'état 15
+    WH   décalage et aller à l'état 16
+    '{'  décalage et aller à l'état 17
+
+    typed_expr  aller à l'état 18
+    atomic_cmd  aller à l'état 95
+
+
+État 73
+
+   26 atomic_cmd: '{' cmd '}' .
+
+    $défaut  réduction par utilisation de la règle 26 (atomic_cmd)
+
+
+État 74
+
+    2 expr: expr . PL T
+    3     | expr . MO T
+    4     | expr . OR T
+    5     | expr . LT T
+    6     | expr . EQ T
+   23 atomic_cmd: typed_expr AF expr .  [$end, V, DEF, DEP, SK, SE, IF, EL, WH, '{', '}']
+
+    PL  décalage et aller à l'état 65
+    MO  décalage et aller à l'état 66
+    OR  décalage et aller à l'état 67
+    LT  décalage et aller à l'état 68
+    EQ  décalage et aller à l'état 69
+
+    $défaut  réduction par utilisation de la règle 23 (atomic_cmd)
+
+
+État 75
+
+    2 expr: expr . PL T
+    3     | expr . MO T
+    4     | expr . OR T
+    5     | expr . LT T
+    6     | expr . EQ T
+   20 typed_expr: typed_expr '[' expr . ']'
+
+    PL   décalage et aller à l'état 65
+    MO   décalage et aller à l'état 66
+    OR   décalage et aller à l'état 67
+    LT   décalage et aller à l'état 68
+    EQ   décalage et aller à l'état 69
+    ']'  décalage et aller à l'état 96
+
+
+État 76
+
+   21 cmd: cmd SE atomic_cmd .
+
+    $défaut  réduction par utilisation de la règle 21 (cmd)
+
+
+État 77
+
+   21 cmd: cmd . SE atomic_cmd
+   44 decl_def: block_def_proc block_decl_typed_var cmd .  [V, DEF, DEP, SK, IF, WH, '{']
+
+    SE  décalage et aller à l'état 48
+
+    $défaut  réduction par utilisation de la règle 44 (decl_def)
+
+
+État 78
+
+   21 cmd: cmd . SE atomic_cmd
+   45 decl_def: block_def_func block_decl_typed_var cmd .  [V, DEF, DEP, SK, IF, WH, '{']
+
+    SE  décalage et aller à l'état 48
+
+    $défaut  réduction par utilisation de la règle 45 (decl_def)
+
+
+État 79
+
+    2 expr: . expr PL T
+    3     | . expr MO T
+    4     | . expr OR T
+    5     | . expr LT T
+    6     | . expr EQ T
+    7     | . T
+    8 T: . T MU F
+    9  | . T AND F
+   10  | . NOT F
+   11  | . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+   32 block_non_nil_typed_expr: . expr
+   33                         | . expr ',' block_non_nil_typed_expr
+   33                         | expr ',' . block_non_nil_typed_expr
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    NOT    décalage et aller à l'état 38
+    '('    décalage et aller à l'état 39
+
+    expr                      aller à l'état 54
+    T                         aller à l'état 41
+    F                         aller à l'état 42
+    typed_expr                aller à l'état 43
+    block_non_nil_typed_expr  aller à l'état 97
+
+
+État 80
+
+   29 atomic_cmd: V '(' block_expr ')' .
+
+    $défaut  réduction par utilisation de la règle 29 (atomic_cmd)
+
+
+État 81
+
+   19 typed_expr: V '[' expr ']' .
+
+    $défaut  réduction par utilisation de la règle 19 (typed_expr)
+
+
+État 82
+
+   43 block_def_func: DEF IDFUNC '(' block_expr . ')' ':' type_decl
+
+    ')'  décalage et aller à l'état 98
+
+
+État 83
+
+   42 block_def_proc: DEP IDPROC '(' block_expr . ')'
+
+    ')'  décalage et aller à l'état 99
+
+
+État 84
+
+   16 F: V '(' block_expr . ')'
+
+    ')'  décalage et aller à l'état 100
+
+
+État 85
+
+    2 expr: . expr PL T
+    3     | . expr MO T
+    4     | . expr OR T
+    5     | . expr LT T
+    6     | . expr EQ T
+    7     | . T
+    8 T: . T MU F
+    9  | . T AND F
+   10  | . NOT F
+   11  | . F
+   12 F: . '(' expr ')'
+   13  | . I
+   14  | . V
+   15  | . B
+   16  | . V '(' block_expr ')'
+   17  | . NEWAR type_decl '[' expr ']'
+   17  | NEWAR type_decl '[' . expr ']'
+   18  | . typed_expr
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+
+    I      décalage et aller à l'état 34
+    B      décalage et aller à l'état 35
+    V      décalage et aller à l'état 36
+    NEWAR  décalage et aller à l'état 37
+    NOT    décalage et aller à l'état 38
+    '('    décalage et aller à l'état 39
+
+    expr        aller à l'état 101
+    T           aller à l'état 41
+    F           aller à l'état 42
+    typed_expr  aller à l'état 43
+
+
+État 86
+
+   12 F: '(' expr ')' .
+
+    $défaut  réduction par utilisation de la règle 12 (F)
+
+
+État 87
+
+   21 cmd: cmd . SE atomic_cmd
+   27 atomic_cmd: IF expr TH cmd . EL atomic_cmd
+
+    SE  décalage et aller à l'état 48
+    EL  décalage et aller à l'état 102
+
+
+État 88
+
+    2 expr: expr PL T .  [$end, V, DEF, DEP, SK, SE, IF, TH, EL, WH, DO, PL, MO, OR, LT, EQ, ')', ']', '{', '}', ',']
+    8 T: T . MU F
+    9  | T . AND F
+
+    MU   décalage et aller à l'état 70
+    AND  décalage et aller à l'état 71
+
+    $défaut  réduction par utilisation de la règle 2 (expr)
+
+
+État 89
+
+    3 expr: expr MO T .  [$end, V, DEF, DEP, SK, SE, IF, TH, EL, WH, DO, PL, MO, OR, LT, EQ, ')', ']', '{', '}', ',']
+    8 T: T . MU F
+    9  | T . AND F
+
+    MU   décalage et aller à l'état 70
+    AND  décalage et aller à l'état 71
+
+    $défaut  réduction par utilisation de la règle 3 (expr)
+
+
+État 90
+
+    4 expr: expr OR T .  [$end, V, DEF, DEP, SK, SE, IF, TH, EL, WH, DO, PL, MO, OR, LT, EQ, ')', ']', '{', '}', ',']
+    8 T: T . MU F
+    9  | T . AND F
+
+    MU   décalage et aller à l'état 70
+    AND  décalage et aller à l'état 71
+
+    $défaut  réduction par utilisation de la règle 4 (expr)
+
+
+État 91
+
+    5 expr: expr LT T .  [$end, V, DEF, DEP, SK, SE, IF, TH, EL, WH, DO, PL, MO, OR, LT, EQ, ')', ']', '{', '}', ',']
+    8 T: T . MU F
+    9  | T . AND F
+
+    MU   décalage et aller à l'état 70
+    AND  décalage et aller à l'état 71
+
+    $défaut  réduction par utilisation de la règle 5 (expr)
+
+
+État 92
+
+    6 expr: expr EQ T .  [$end, V, DEF, DEP, SK, SE, IF, TH, EL, WH, DO, PL, MO, OR, LT, EQ, ')', ']', '{', '}', ',']
+    8 T: T . MU F
+    9  | T . AND F
+
+    MU   décalage et aller à l'état 70
+    AND  décalage et aller à l'état 71
+
+    $défaut  réduction par utilisation de la règle 6 (expr)
+
+
+État 93
+
+    8 T: T MU F .
+
+    $défaut  réduction par utilisation de la règle 8 (T)
+
+
+État 94
+
+    9 T: T AND F .
+
+    $défaut  réduction par utilisation de la règle 9 (T)
+
+
+État 95
+
+   28 atomic_cmd: WH expr DO atomic_cmd .
+
+    $défaut  réduction par utilisation de la règle 28 (atomic_cmd)
+
+
+État 96
+
+   20 typed_expr: typed_expr '[' expr ']' .
+
+    $défaut  réduction par utilisation de la règle 20 (typed_expr)
+
+
+État 97
+
+   33 block_non_nil_typed_expr: expr ',' block_non_nil_typed_expr .
+
+    $défaut  réduction par utilisation de la règle 33 (block_non_nil_typed_expr)
+
+
+État 98
+
+   43 block_def_func: DEF IDFUNC '(' block_expr ')' . ':' type_decl
+
+    ':'  décalage et aller à l'état 103
+
+
+État 99
+
+   42 block_def_proc: DEP IDPROC '(' block_expr ')' .
+
+    $défaut  réduction par utilisation de la règle 42 (block_def_proc)
+
+
+État 100
+
+   16 F: V '(' block_expr ')' .
+
+    $défaut  réduction par utilisation de la règle 16 (F)
+
+
+État 101
+
+    2 expr: expr . PL T
+    3     | expr . MO T
+    4     | expr . OR T
+    5     | expr . LT T
+    6     | expr . EQ T
+   17 F: NEWAR type_decl '[' expr . ']'
+
+    PL   décalage et aller à l'état 65
+    MO   décalage et aller à l'état 66
+    OR   décalage et aller à l'état 67
+    LT   décalage et aller à l'état 68
+    EQ   décalage et aller à l'état 69
+    ']'  décalage et aller à l'état 104
+
+
+État 102
+
+   19 typed_expr: . V '[' expr ']'
+   20           | . typed_expr '[' expr ']'
+   23 atomic_cmd: . typed_expr AF expr
+   24           | . V AF expr
+   25           | . SK
+   26           | . '{' cmd '}'
+   27           | . IF expr TH cmd EL atomic_cmd
+   27           | IF expr TH cmd EL . atomic_cmd
+   28           | . WH expr DO atomic_cmd
+   29           | . V '(' block_expr ')'
+
+    V    décalage et aller à l'état 11
+    SK   décalage et aller à l'état 14
+    IF   décalage et aller à l'état 15
+    WH   décalage et aller à l'état 16
+    '{'  décalage et aller à l'état 17
+
+    typed_expr  aller à l'état 18
+    atomic_cmd  aller à l'état 105
+
+
+État 103
+
+   35 type_decl: . T_BOO
+   36          | . T_INT
+   37          | . T_AR type_decl
+   43 block_def_func: DEF IDFUNC '(' block_expr ')' ':' . type_decl
+
+    T_INT  décalage et aller à l'état 25
+    T_AR   décalage et aller à l'état 26
+    T_BOO  décalage et aller à l'état 27
+
+    type_decl  aller à l'état 106
+
+
+État 104
+
+   17 F: NEWAR type_decl '[' expr ']' .
+
+    $défaut  réduction par utilisation de la règle 17 (F)
+
+
+État 105
+
+   27 atomic_cmd: IF expr TH cmd EL atomic_cmd .
+
+    $défaut  réduction par utilisation de la règle 27 (atomic_cmd)
+
+
+État 106
+
+   43 block_def_func: DEF IDFUNC '(' block_expr ')' ':' type_decl .
+
+    $défaut  réduction par utilisation de la règle 43 (block_def_func)
