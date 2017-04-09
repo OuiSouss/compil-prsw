@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "arbre.h"
 #include "interp.h"
+#include "c3a.h"
 /* ------------------VARIABLES GLOBALES -------------------------*/
   NOE syntree;          /* commande  globale                     */
   BILENVTY benvty;      /* environnement global                  */
@@ -28,7 +29,7 @@
 /* Et: expr tableau; */
 /* type_decl:TyPe; Argt:argument_type; */
 /* L_vart: Liste_variables_typees,   L_vartnn: Liste_variables_typees non-nil */
-%token <NO> I B V DEF DEP IDPROC IDFUNC MP AF AFC SK NEWAR SE IND IF TH EL VAR WH DO PL MO MU AND OR NOT LT EQ 
+%token <NO> I B V DEF DEP IDPROC IDFUNC MP AF AFC JZ JP SK NEWAR SE IND IF TH EL VAR WH DO PL MO MU AND OR NOT LT EQ 
 %token <TYP> T_INT T_ERR T_AR T_CMD T_BOO
 
 /* Unités lexicales<NO>: Integer Variable Main_prog                            */
@@ -205,7 +206,21 @@ list_def:   %empty              { }
 int main(int argn, char **argv)
 {//ligcour=0;
   yyparse();
-  pp2quad(syntree);
+  BILQUAD c3a;
+  c3a = pp2quad(syntree);
+  fprintf(stdout, "startc3a\n");
+  if (c3a.debut->ETIQ == NULL)
+      fprintf(stdout, "NULLPTR\n");
+  else
+      fprintf(stdout, "NONNULLPTR\n");
+  fprintf(stdout, "op adr : '%p'\n", &(c3a.debut->OP));
+  fprintf(stdout, "op : '%d'\n", ((c3a.debut)->OP));
+//  if (c3a.debut->ETIQ == "")
+//      fprintf(stdout, "          ");
+//  else
+//  fprintf(stdout, "%d\n", c3a.debut->OP);
+  //ecrire_quad(c3a.debut);
+  //ecrire_bilquad(c3a);
   return(1);
 }
 /**/

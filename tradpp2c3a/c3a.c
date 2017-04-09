@@ -147,7 +147,9 @@ void ecrire_quad(QUAD qd)
 /* affiche le quadruplet (pour generer code) avec separateur":" ; 
 puis saute a la ligne */
 void ecrire_sep_quad(QUAD qd)
-{ if(strcmp(qd->ETIQ,"") == 0)       /* etiquette= mot vide */
+{ if (qd == NULL)
+    return;
+    if(strcmp(qd->ETIQ,"") == 0)       /* etiquette= mot vide */
     {printf("%-10s: ","");}
   else
     {printf("%-10s:",qd->ETIQ);}
@@ -213,6 +215,8 @@ void ecrire_sep_bilquad(BILQUAD bq)
  */
 BILQUAD pp2quad(NOE ec)
 {
+    fprintf(stdout, "noe etiq : '%s'\n", ec->ETIQ);
+    fprintf(stdout, "noe op : '%d'\n", ec->codop);
 	extern BILENVTY benvty;
 	type t;
 	BILQUAD bil_fg, bil_fd, bil_exp, bil_res;
@@ -221,90 +225,174 @@ BILQUAD pp2quad(NOE ec)
 	char* narg1 = NULL;
 	char* narg2 = NULL;
 	QUAD nquad;
-	assert(ec != NULL);
+        assert(ec != NULL);
 
-	switch(ec->codop)
-	{
-		case PL:
-		case MO:
-		case MU:
-		netiq=gensym("ET");
-		newop=ec->codop;
+        switch(ec->codop)
+        {
+            case PL: case MO: case MU:
+            {
+                netiq=gensym("ET");
+                newop=ec->codop;
 
-		// On traduit les arguments
-		bil_fg=pp2quad(ec->FG);
-		bil_fd=pp2quad(ec->FD);
-		
-		// On les simplifie si possible
-		if(ec->FG->codop != V)
-		{
-			narg1=Idalloc();
-			strcpy(narg1, bil_fg.fin->RES);
-		}
-		else
-		{
-			narg1 = Idalloc();
-			strcpy(narg1, ec->FG->ETIQ);
-		}
+                // On traduit les arguments
+                bil_fg=pp2quad(ec->FG);
+                bil_fd=pp2quad(ec->FD);
 
-		if(ec->FD->codop != V)
-		{
-			narg2=Idalloc();
-			strcpy(narg2, bil_fd.fin->RES);
-		}
-		else
-		{
-			narg2 = Idalloc();
-			strcpy(narg2, ec->FD->ETIQ);
-		}
+                // On les simplifie si possible
+                if(ec->FG->codop != V)
+                {
+                    narg1=Idalloc();
+                    strcpy(narg1, bil_fg.fin->RES);
+                } else
+                {
+                    narg1 = Idalloc();
+                    strcpy(narg1, ec->FG->ETIQ);
+                }
+                if(ec->FD->codop != V)
+                {
+                    narg2=Idalloc();
+                    strcpy(narg2, bil_fd.fin->RES);
+                } else
+                {
+                    narg2 = Idalloc();
+                    strcpy(narg2, ec->FD->ETIQ);
+                }
 
-		nres = gensym("VA");
-		t.DIM = 0;
-		t.TYPEF = T_INT;
-		inbilenvty(&benvty, nres, t);
+                nres = gensym("VA");
+                t.DIM = 0;
+                t.TYPEF = T_INT;
+                inbilenvty(&benvty, nres, t);
 
-		nquad=creer_quad(netiq, newop, narg1, narg2, nres);
-		bil_res=creer_bilquad(nquad);
+                nquad=creer_quad(netiq, newop, narg1, narg2, nres);
+                bil_res=creer_bilquad(nquad);
 
-		bil_fd=concatq(bil_fg, bil_fd);
-		bil_res=concatq(bil_fd, bil_res);
-		break;
-		case I:
-	      /* les ingredients */
-	      netiq=gensym("ET");newop=AFC;
-	      narg1=Idalloc();sprintf(narg1,"%s",ec->ETIQ);
-	      narg2=NULL;nres=gensym("CT");
-	      /* on insere le nom de const dans l' environnement */
-		  t.DIM = 0;
-		  t.TYPEF = T_INT;
-		  inbilenvty(&benvty, nres, t);
-	      /* le quadruplet: ETnum, Afc, chaineconst,-, CTnum */
-	      nquad=creer_quad(netiq,newop,narg1,narg2,nres);
-	      bil_res=creer_bilquad(nquad);
-      break;
-   		case V:
-	      /* le quadruplet: skip, resultat dans chainevar */
-	      netiq=gensym("ET");newop=SK;narg1=NULL;narg2=NULL;nres=ec->ETIQ;
-	      nquad=creer_quad(netiq,newop,narg1,narg2,nres);
-	      bil_res=creer_bilquad(nquad);
-	      break;
-		case AF:
-      /* les ingredients */
-      netiq=gensym("ET");
-      newop=AF;
-            /* assert(ec->FG->codop==V); */
-      /* narg1= chaine en lhs */
-      narg1=ec->FG->ETIQ;
-      /* narg2= adresse res du code du rhs */
-      bil_fd=pp2quad(ec->FD);
-            narg2=Idalloc();
-      strcpy(narg2,bil_fd.fin->RES);
-      nres=NULL;
-      /* le quadruplet: ETnum, Af, chainevar1,chaineres2, NULL */
-      nquad=creer_quad(netiq,newop,narg1,narg2,nres);
-      bil_res=concatq(bil_fd,creer_bilquad(nquad));
-      break;	
-	}
-
-	return bil_fg;
+                bil_fd=concatq(bil_fg, bil_fd);
+                bil_res=concatq(bil_fd, bil_res);
+                break;
+            }
+            case I:
+            {
+                /* les ingredients */
+                netiq=gensym("ET");newop=AFC;
+                narg1=Idalloc();sprintf(narg1,"%s",ec->ETIQ);
+                narg2=NULL;nres=gensym("CT");
+                /* on insere le nom de const dans l' environnement */
+                t.DIM = 0;
+                t.TYPEF = T_INT;
+                inbilenvty(&benvty, nres, t);
+                /* le quadruplet: ETnum, Afc, chaineconst,-, CTnum */
+                nquad=creer_quad(netiq,newop,narg1,narg2,nres);
+                bil_res=creer_bilquad(nquad);
+                break;
+            }
+            case V:
+            {   
+                /* le quadruplet: skip, resultat dans chainevar */
+                netiq=gensym("ET");newop=SK;narg1=NULL;narg2=NULL;nres=ec->ETIQ;
+                nquad=creer_quad(netiq,newop,narg1,narg2,nres);
+                bil_res=creer_bilquad(nquad);
+                break;
+            }
+            case AF:
+            {
+                /* les ingredients */
+                netiq=gensym("ET");
+                newop=AF;
+                /* assert(ec->FG->codop==V); */
+                /* narg1= chaine en lhs */
+                narg1=ec->FG->ETIQ;
+                /* narg2= adresse res du code du rhs */
+                bil_fd=pp2quad(ec->FD);
+                narg2=Idalloc();
+                strcpy(narg2,bil_fd.fin->RES);
+                nres=NULL;
+                /* le quadruplet: ETnum, Af, chainevar1,chaineres2, NULL */
+                nquad=creer_quad(netiq,newop,narg1,narg2,nres);
+                bil_res=concatq(bil_fd,creer_bilquad(nquad));
+                break;
+            }
+            case SK:
+            {
+                /* les ingredients */
+                netiq=gensym("ET");newop=SK;narg1=NULL;narg2=NULL;nres=NULL;
+                /* le quadruplet: skip  (pas d'adresse de resultat) */
+                nquad=creer_quad(netiq,newop,narg1,narg2,nres);
+                bil_res=creer_bilquad(nquad);
+                break;
+            }
+            case SE:
+            {
+                bil_fg = pp2quad(ec->FG);
+                bil_fd = pp2quad(ec->FD);
+                bil_res = concatq(bil_fg, bil_fd);
+                break;
+            }
+            case IF:
+            {
+                bil_exp = pp2quad(ec->FG);    /* traduction de l'expression */
+                bil_fg = pp2quad(ec->FD->FG); /* commande (cas vrai) */
+                bil_fd = pp2quad(ec->FD->FD); /* commande (cas faux) */
+                bil_fd = normal(bil_fd);
+                /* les ingredients de bil_fg */
+                netiq = gensym("ET");
+                newop = JZ;
+                narg1 = bil_exp.fin->RES;
+                narg2 = NULL;
+                nres = bil_fd.debut->ETIQ;
+                /* le quadruplet bil_fg */
+                nquad = creer_quad(netiq, newop, narg1, narg2, nres);
+                /* nouvelle biliste */
+                bil_res = concatq(bil_exp, creer_bilquad(nquad));
+                bil_res=concatq(bil_res, bil_fg);
+                /* les ingredients de bil_fd */
+                netiq = gensym("ET");
+                newop = JP;
+                narg1 = NULL;
+                narg2 = NULL;
+                nres = bil_fd.fin->ETIQ;
+                /* le quadruplet bil_fd */
+                nquad = creer_quad(netiq, newop, narg1, narg2, nres);
+                /* nouvelle biliste */
+                bil_res = concatq(bil_res, creer_bilquad(nquad));
+                bil_res = concatq(bil_res, bil_fd);
+                break;
+            }
+            case WH:
+            {
+                bil_exp = pp2quad(ec->FG);    /* traduction de l'expression */
+                bil_fg = pp2quad(ec->FD);     /* traduction du corps        */
+                bil_fg = normal(bil_fg);
+                /* les ingredients de Q1 */
+                netiq = gensym("ET");
+                newop = JZ;  /* etiquette de Q1            */
+                narg1 = bil_exp.fin->RES;
+                narg2 = NULL;
+                netiqf = gensym("ET");        /* etiquette fin de traduction */
+                nres = netiqf;
+                /* le quadruplet Q1 */
+                nquad = creer_quad(netiq, newop, narg1, narg2, nres);
+                /* nouvelle biliste */
+                bil_res = concatq(bil_exp, creer_bilquad(nquad));
+                bil_res=concatq(bil_res, bil_fg);
+                /* les ingredients de Q2 */
+                newop = JP;
+                /* narg1=narg2=NULL; */
+                nres = bil_exp.debut->ETIQ;
+                /* on substitue Q2 a la fin de bil_res */
+                bil_res.fin->OP = newop;
+                bil_res.fin->RES = nres;
+                /* les ingredients de Q3 */
+                netiq = netiqf;                   /* etiquette de Q3            */
+                newop = SK;
+                narg1 = NULL;
+                narg2 = NULL;
+                nres = NULL;
+                /* le quadruplet Q3 */
+                nquad = creer_quad(netiq, newop, narg1, narg2, nres);
+                /* nouvelle biliste */
+                bil_res = concatq(bil_res, creer_bilquad(nquad));
+                break;
+            }
+        }
+        return bil_res;
 }

@@ -195,6 +195,8 @@ char *nomop(int codop)
     case(NOT): return("Not");
     case(LT): return("<");
     case(EQ): return("=");
+    case(JP): return ("Jp");
+    case(JZ): return ("Jz");
     default: return(NULL);
     };
 }
