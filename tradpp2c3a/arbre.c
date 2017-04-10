@@ -178,6 +178,7 @@ char *nomop(int codop)
     case(NEWAR): return("New_array_of ");
     case(T_AR): return("array_of ");
     case(T_INT): return("integer");
+    case(T_BOO): return("boolean");
     case(T_CMD): return("commande");
     case(T_ERR): return("typ_erreur");  
     case(SE): return("Se");
@@ -193,10 +194,12 @@ char *nomop(int codop)
     case(AND):return("And");
     case(OR): return("Or");
     case(NOT): return("Not");
-    case(LT): return("<");
-    case(EQ): return("=");
+    case(LT): return("Lt");
+    case(EQ): return("Eq");
     case(JP): return ("Jp");
     case(JZ): return ("Jz");
+    case(AFC): return ("Afc");
+    case(AFIND): return ("AfInd");
     default: return(NULL);
     };
 }
