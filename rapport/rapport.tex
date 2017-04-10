@@ -181,11 +181,15 @@ Celui-ci permettra de retracer la pile des appels engendrés par une instruction
 Par exemple, une affectation d'un numéral dans une variable sera représentée par des instructions dont la dernière (l'affectation finale) aura une valeur de compteur la plus faible.
 \pagebreak
 \section{Problèmes rencontrés}
-Le principal problème rencontré est la gestion des fonctions et des procédures. Etant donné que nous avons pas réussi à créer un parser fonctionnel avec celles-ci, et par manque de temps, nous avons, par conséquent décidé de travailler sur un \og pseudo-pseudo-pascal \fg{} qui ne prend pas en compte les fonctions et procédure. Néanmoins, en dehors de ce point problématique, nous avons respecté la définition du langage pseudo-pascal du projet.
+Le principal problème rencontré est la gestion des fonctions et des procédures. Etant donné que nous avons pas réussi à créer un parseur fonctionnel avec celles-ci, et par manque de temps, nous avons, par conséquent, décidé de travailler sur un \og pseudo-pseudo-pascal \fg{} qui ne prend pas en compte les fonctions et procédures. Néanmoins, en dehors de ce point problématique, nous avons respecté la définition du langage pseudo-pascal du projet.
+\par
+De plus, nous avons eu du mal à régler un problème lors de l'analyse sémantique sur un tableaux. En effet, lors de l'affectation, nous avions un décalage dans le TAS. Ce problème a été régleé par simple affectation à la bonne addresse. 
+\par 
+Enfin, nous avons encore un problème persistant lors de l'analyse semantique lorsqu'il faut gérer le typage.
 \pagebreak
 \section{Conclusion}
 
-Ce projet de compilation, nous a permis d'intégrer toutes les spécificités vues en cours concernant la réalisation d'un compilateur et d'un interpréteur pour un langage donné. 
+Ce projet de compilation, nous a permis d'intégrer toutes les spécificités vues en cours concernant la réalisation d'un compilateur et d'un interpréteur pour un langage donné. De plus, il nous a permis d'acquérir plus de notion sur comment effectué une analyse syntaxique avec des types, ainsi que d'utiliser le mode à grand pas pour l'analyse sémantique. 
 
 
 

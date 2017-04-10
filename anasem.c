@@ -13,7 +13,7 @@ void typ_error(char *mess,int ligne)
   return;
 }
 
-/* renvoie le type de e : TYPEF \in T_INT, T_boo, T_CMD, T_err, T_bot          */
+/* renvoie le type de e : TYPEF \in T_INT, T_BOO, T_CMD, T_ERR, T_BOT          */
 /* affecte ce type a la racine                                                 */
 /* suppose corrects les types des fils                                         */
 /* envoie message d'erreur si mal type a la racine et fils bien types          */
@@ -21,7 +21,7 @@ void typ_error(char *mess,int ligne)
 type calcul_type(BILENVTY rho_gb, NOE e, int ligne)
 {
   type tp;
-  tp= creer_type(0,T_BOO);/* type par defaut */
+  tp= creer_type(0,T_BOT);/* type par defaut */
   if(e != NULL)
     {
       type tfg,tfd;                /* type  du fils gauche, fils droit */

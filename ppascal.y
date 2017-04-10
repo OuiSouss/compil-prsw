@@ -30,7 +30,7 @@
 /* type_decl:TyPe; Argt:argument_type; */
 /* L_vart: Liste_variables_typees,   L_vartnn: Liste_variables_typees non-nil */
 %token <NO> I B V DEF DEP IDPROC IDFUNC MP AF SK NEWAR SE IND IF TH EL VAR WH DO PL MO MU AND OR NOT LT EQ T_CMD T_AR
-%token <TYP> T_INT T_ERR T_BOO
+%token <TYP> T_INT T_ERR T_BOO T_BOT
 
 /* Unités lexicales<NO>: Integer Variable Main_prog                            */
 /* Affectation Skip NewArrayOf                                                 */
@@ -211,7 +211,7 @@ list_def:   %empty              { }
 #include "lex.yy.c"
 
 
-/*  /*  pour tester l'analyse 
+/*pour tester l'analyse 
 int main(int argn, char **argv)
 {yyparse();
  ecrire_prog(benvty,syntree);
@@ -225,15 +225,19 @@ int main(int argn, char **argv)
 {//ligcour=0;
   yyparse();
   ecrire_prog(benvty,syntree);
-  init_memoire();
   type terr=creer_type(0,T_ERR);
   type tcom= creer_type(0,T_CMD);
   if (type_eq(syntree->typno,terr))
-    return printf("erreur de typage\n");
+  {
+    printf("erreur de typage\n");
+  }
   else if (type_eq(syntree->typno,tcom))
     printf("programme bien type\n");
   else
-    return printf("attention: typage incomplet\n");
+  {
+    printf("attention: typage incomplet\n");
+  }
+  init_memoire();
   printf("Les variables globales avant exec:\n");
   printf("------------------------:\n");
   ecrire_bilenvty(benvty); printf("\n");

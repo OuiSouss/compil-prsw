@@ -201,7 +201,9 @@ char *nomop(int codop)
     case(T_AR): return("array_of ");
     case(T_INT): return("integer");
     case(T_CMD): return("commande");
-    case(T_ERR): return("typ_erreur");  
+    case(T_ERR): return("typ_erreur");
+    case(T_BOO): return ("boolean");
+    case(T_BOT): return ("typ_indefini");  
     case(SE): return("Se");
     case(IND): return("Ind");  
     case(IF): return("If");
