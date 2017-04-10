@@ -215,8 +215,6 @@ void ecrire_sep_bilquad(BILQUAD bq)
  */
 BILQUAD pp2quad(NOE ec)
 {
-    fprintf(stdout, "noe etiq : '%s'\n", ec->ETIQ);
-    fprintf(stdout, "noe op : '%d'\n", ec->codop);
 	extern BILENVTY benvty;
 	type t;
 	BILQUAD bil_fg, bil_fd, bil_exp, bil_res;
@@ -270,6 +268,66 @@ BILQUAD pp2quad(NOE ec)
                 bil_res=concatq(bil_fd, bil_res);
                 break;
             }
+            case AND: case OR: case LT: case EQ:
+            {
+                netiq = gensym("ET");
+                newop = ec->codop;
+
+                bil_fg = pp2quad(ec->FG);
+                bil_fd = pp2quad(ec->FD);
+                if(ec->FG->codop != V)
+                {
+                    narg1=Idalloc();
+                    strcpy(narg1, bil_fg.fin->RES);
+                } else
+                {
+                    narg1 = Idalloc();
+                    strcpy(narg1, ec->FG->ETIQ);
+                }
+                if(ec->FD->codop != V)
+                {
+                    narg2=Idalloc();
+                    strcpy(narg2, bil_fd.fin->RES);
+                } else
+                {
+                    narg2 = Idalloc();
+                    strcpy(narg2, ec->FD->ETIQ);
+                }
+
+                nres = gensym("VA");
+                t.DIM = 0;
+                t.TYPEF = T_BOO;
+                inbilenvty(&benvty, nres, t);
+
+                nquad=creer_quad(netiq, newop, narg1, narg2, nres);
+                bil_res=creer_bilquad(nquad);
+
+                bil_fd=concatq(bil_fg, bil_fd);
+                bil_res=concatq(bil_fd, bil_res);
+                break;
+            }
+            case NOT:
+            {
+                netiq = gensym("ET");
+                newop = NOT;
+                narg1 = Idalloc();
+                if(ec->FG->codop != V)
+                    strcpy(narg1, bil_fg.fin->RES);
+                else
+                    strcpy(narg1, ec->FG->ETIQ);
+                narg2 = NULL;
+                nres = Idalloc();
+                if (narg1[0] == '-')
+                    sprintf(nres, "%s", narg1 + 1);
+                else
+                    sprintf(nres, "-%s", narg1);
+
+                t.DIM = 0;
+                t.TYPEF = ec->typno.TYPEF;
+                nquad = creer_quad(netiq, newop, narg1, narg2, nres);
+                bil_res = creer_bilquad(nquad);
+                break;
+            }
             case I:
             {
                 /* les ingredients */
@@ -285,6 +343,39 @@ BILQUAD pp2quad(NOE ec)
                 bil_res=creer_bilquad(nquad);
                 break;
             }
+            case B:
+            {
+                netiq = gensym("ET"); newop = AFC;
+                narg1 = Idalloc();
+                if (strcmp(ec->ETIQ, "1") == 0)
+                    sprintf(narg1, "%s", "true");
+                else
+                    sprintf(narg1, "%s", "false");
+                narg2 = NULL; nres = gensym("CT");
+
+                t.DIM = 0;
+                t.TYPEF = T_BOO;
+                inbilenvty(&benvty, nres, t);
+
+                nquad = creer_quad(netiq, newop, narg1, narg2, nres);
+                bil_res = creer_bilquad(nquad);
+                break;
+            }
+            case IND:
+            {
+                break;
+            }
+//            case NEWAR:
+//            {
+//                netiq = gensym("ET"); newop = AFIND;
+//                narg1 = Idalloc(); sprintf(narg1, "%s", ec->FD->ETIQ);
+//                narg2 = NULL; nres = gensym("CT");
+//                t.DIM = ec->typno.DIM;
+//                t.TYPEF = ec->typno.TYPEF;
+//                nquad = creer_quad(netiq, newop, narg1, narg2, nres);
+//                bil_res = creer_bilquad(nquad);
+//                break;
+//            }
             case V:
             {   
                 /* le quadruplet: skip, resultat dans chainevar */
