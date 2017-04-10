@@ -1,4 +1,10 @@
 /* ppascal.y */
+/*
+* Pichon Alexis
+* Risi Amélie
+* Haize Weiss
+* Clément Sybille
+*/
 %{
 #include <stdio.h>
 #include <ctype.h>
