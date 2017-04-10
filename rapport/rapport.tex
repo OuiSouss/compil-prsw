@@ -30,11 +30,11 @@ Dans les parties qui suivent nous allons détailler ce qui a été fait et comme
 Pour l'analyse syntaxique, nous avons repris le travail réalisé lors du TD concernant les tableaux. 
 
 \subsection{La grammaire}
-Nous avons ensuite modifié le lexer et le fichier Bison pour obtenir la grammaire voulue. Nos conventions d'écriture sont les suivantes, les non-terminaux sont écrits en lettres minuscules et les ternimaux exclusivement en lettres majsucules. 
-La grammaire, fournie initialement dans le sujet de projet, était ambiguë. Pour pallier à ce problème, le non-terminal E de la grammaire initiale a été transformé en expr, term et fact des non-terminaux qui qualifient respectivement l'expression, le terme et le facteur. 
+Nous avons ensuite modifié le lexer et le fichier Bison pour obtenir la grammaire voulue. Nos conventions d'écriture sont les suivantes, les non-terminaux sont écrits en lettres minuscules et les terminaux exclusivement en lettres majsucules. 
+La grammaire, fournie initialement dans le sujet du projet, était ambiguë. Pour pallier à ce problème, le non-terminal E de la grammaire initiale a été transformé en expr, term et fact, des non-terminaux qui qualifient respectivement l'expression, le terme et le facteur. 
 \subsubsection{L'expression}
-L'expression est le dernier échellon de priorité des opérateurs donc elle englobe tous les opérateurs qui ont une faible priorité : Plus, Moins, Ou, Inférieur strictement, Egal. 
-Ce sont des terminaux écrits respectivement de cette manière dans notre grammaire : PL, MO, OR, EQ.
+L'expression est le dernier échellon de priorité des opérateurs, elle englobe donc tous les opérateurs qui ont une faible priorité : Plus, Moins, Ou, Inférieur strictement, Egal. 
+Ce sont des terminaux écrits respectivement de cette manière dans notre grammaire : PL, MO, OR, LT, EQ.
 \subsubsection{Le terme}
 Le terme répresente une plus forte priorité par rapport aux précédents. Il correspond aux opérateurs suivants : Multiplication, Et, Non.
 Ces opérateurs sont écrits de telles manières dans notre parser : MU, AND, NOT.  
@@ -156,13 +156,13 @@ Le module interp reprend les concepts de base fournis à l'occasion du TD06 et e
 Pour ce faire, une analyse descendante et en profondeur de l'arbre syntaxique est effectuée.
 \subsection{évaluation}
 Afin d'interpréter correctement le pseudo pascal, il est necéssaire d'évaluer chaque noeud.
-En effet, certains noeuds comme ceux impliquant des calculs peuvent subir une évaluation en vue d'être réduit.
-Cela signifie que après évaluation tout noeud dont la réduction aura été possible pourra être affiché.
-De ce fait, l'interprétation effectuera tout calcul possible afin de décrire l'état de la mémoire, des variables au moment de la fin du programme.
+En effet, certains noeuds comme ceux impliquant des calculs peuvent subir une évaluation en vue d'être réduits.
+Cela signifie qu'après évaluation tout noeud dont la réduction aura été possible pourra être affiché.
+De ce fait, l'interprétation effectuera tout calcul possible afin de décrire l'état de la mémoire et des variables au moment de la fin du programme.
 \pagebreak
 \section{Compilateur PP vers C3A}
-Pour traduire un programme écrit en langage PP vers le langage C3A, nous sommes parti sur la base de la correction du compilateur IMP vers C3A réalisé lors du mini-projet.
-Afin de produire du code c3a, il est necéssaire de reprendre la structure en arbre utilisée au cours des étapes précédentes en vue de la revoir.
+Pour traduire un programme écrit en langage PP vers le langage C3A, nous sommes partis sur la base de la correction du compilateur IMP vers C3A réalisé lors du mini-projet.
+Afin de produire du code C3A, il est nécessaire de reprendre la structure en arbre utilisée au cours des étapes précédentes en vue de la revoir.
 Le code à 3 adresses est caractérisé par une liste de quadruplets qui illustrent le modèle vu en cours :
 Etiquette: Opérateur: Argument1: Argument2: Résultat.
 \par
@@ -170,11 +170,12 @@ Chaque opération recevra ou non des arguments enregistrés dans le quadruplet (
 Elle pourra également transmettre ou non un résultat pouvant ensuite être utilisé par d'autres opérations ou référencé au sein d'autres quadruplets.
 Afin de permettre une clarification du produit de l'analyse syntaxique, le code à 3 adresse va également référencer toute étape implicite requise par le programme.
 Ainsi, lorsqu'une variable sera initialisée, du code à 3 adresses illustrant le chargement de la valeur dans un registre en vue d'une affectation sera produit.
-Cela signifie qu'un noeud correspondant à une expression terminale (telle que l'affectation d'un numéral à une variable) équivaudra à 2 instructions en c3a.
+Cela signifie qu'un noeud correspondant à une expression terminale (telle que l'affectation d'un numéral à une variable) équivaudra à 2 instructions en C3A.
 \pagebreak
+
 \section{Interpréteur C3A}
-Après traduction d'un programme PP en du code à 3 adresses, l'interpréteur sera en mesure d'afficher la biliste de quadruplets correspondant au programme analysé et traduit.
-Cette interprétation prenant en compte les étapes implicites que le code d'orinine ne déclare pas, l'interpréteur recevra une liste au sein de laquelle ces instructions supplémentaires seront intégrées avant l'instruction traduite du PP.
+Après traduction d'un programme PP en code à 3 adresses, l'interpréteur sera en mesure d'afficher la biliste de quadruplets correspondant au programme analysé et traduit.
+Cette interprétation prenant en compte les étapes implicites que le code d'origine ne déclare pas, l'interpréteur recevra une liste au sein de laquelle ces instructions supplémentaires seront intégrées avant l'instruction traduite du PP.
 Le référencement des variables, constantes et états de l'automate repose sur un compteur similaire à un compteur ordinal.
 Celui-ci permettra de retracer la pile des appels engendrés par une instruction.
 Par exemple, une affectation d'un numéral dans une variable sera représentée par des instructions dont la dernière (l'affectation finale) aura une valeur de compteur la plus faible.
