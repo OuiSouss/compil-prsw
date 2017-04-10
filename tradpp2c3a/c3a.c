@@ -361,55 +361,20 @@ BILQUAD pp2quad(NOE ec)
                 bil_res = creer_bilquad(nquad);
                 break;
             }
-//            case IND:
-//            {
-//                netiq = gensym("ET"); newop = ec->codop;
-//
-//                bil_fg = pp2quad(ec->FG);
-//                bil_fd = pp2quad(ec->FD);
-//
-//                if(ec->FG->codop != V)
-//                {
-//                    narg1=Idalloc();
-//                    strcpy(narg1, bil_fg.fin->RES);
-//                } else
-//                {
-//                    narg1 = Idalloc();
-//                    strcpy(narg1, ec->FG->ETIQ);
-//                }
-//                if(ec->FD->codop != V)
-//                {
-//                    narg2=Idalloc();
-//                    strcpy(narg2, bil_fd.fin->RES);
-//                } else
-//                {
-//                    narg2 = Idalloc();
-//                    strcpy(narg2, ec->FD->ETIQ);
-//                }
-//                nres = gensym("VA");
-//                t.DIM = 1;
-//                t.TYPEF = T_AR;
-//                inbilenvty(&benvty, nres, t);
-//
-//                nquad = creer_quad(netiq, newop, narg1, narg2, nres);
-//                bil_res = creer_bilquad(nquad);
-//
-//                bil_fd = concatq(bil_fg, bil_fd);
-//                bil_res = concatq(bil_fd, bil_res);
-//                break;
-//            }
+            case IND:
+            {
+                break;
+            }
 //            case NEWAR:
 //            {
 //                netiq = gensym("ET"); newop = AFIND;
-//                narg1 = Idalloc(); sprintf(narg1, "%s", ec->ETIQ);
-//                narg2 = NUL; nres = gensym("CT");
-//                /* on insere le nom de const dans l' environnement */
+//                narg1 = Idalloc(); sprintf(narg1, "%s", ec->FD->ETIQ);
+//                narg2 = NULL; nres = gensym("CT");
 //                t.DIM = ec->typno.DIM;
 //                t.TYPEF = ec->typno.TYPEF;
-//                inbilenvty(&benvty, nres, t);
-//                /* le quadruplet: ETnum, Afc, chaineconst,-, CTnum */
 //                nquad = creer_quad(netiq, newop, narg1, narg2, nres);
 //                bil_res = creer_bilquad(nquad);
+//                break;
 //            }
             case V:
             {   
