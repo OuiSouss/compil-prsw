@@ -1,9 +1,5 @@
-/* tableaux.l */
 %{
-/*
-NE PAS  ecrire
-#include "iimp.tab.h"
-*/
+
  extern int ligcour;
 %}
 
@@ -62,7 +58,7 @@ do      { return(DO); }
               (yylval.NO)->FG = NULL;
               (yylval.NO)->FD = NULL;
               (yylval.NO)->ETIQ = malloc(2);
-              strcpy((yylval.NO)->ETIQ, "1");
+              strcpy((yylval.NO)->ETIQ, "true");
               printf("analyse lex, ETIQ :%s \n", (yylval.NO)->ETIQ);
               (yylval.NO)->codop = B;
               return (B); }
@@ -74,7 +70,7 @@ do      { return(DO); }
               (yylval.NO)->FG = NULL;
               (yylval.NO)->FD = NULL;
               (yylval.NO)->ETIQ = malloc(2);
-              strcpy((yylval.NO)->ETIQ, "2");
+              strcpy((yylval.NO)->ETIQ, "false");
               printf("analyse lex, ETIQ :%s \n", (yylval.NO)->ETIQ);
               (yylval.NO)->codop = B;
               return (B); }
