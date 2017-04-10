@@ -311,6 +311,7 @@ BILQUAD pp2quad(NOE ec)
                 netiq = gensym("ET");
                 newop = NOT;
                 narg1 = Idalloc();
+                bil_fg=pp2quad(ec->FG);
                 if(ec->FG->codop != V)
                     strcpy(narg1, bil_fg.fin->RES);
                 else
@@ -326,6 +327,7 @@ BILQUAD pp2quad(NOE ec)
                 t.TYPEF = ec->typno.TYPEF;
                 nquad = creer_quad(netiq, newop, narg1, narg2, nres);
                 bil_res = creer_bilquad(nquad);
+                bil_res=concatq(bil_fg, bil_res);
                 break;
             }
             case I:
