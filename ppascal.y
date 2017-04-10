@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "arbre.h"
 #include "interp.h"
+#include "anasem.h"
 /* ------------------VARIABLES GLOBALES -------------------------*/
   NOE syntree;          /* commande  globale                     */
   BILENVTY benvty;      /* environnement global                  */
@@ -28,8 +29,8 @@
 /* Et: expr tableau; */
 /* type_decl:TyPe; Argt:argument_type; */
 /* L_vart: Liste_variables_typees,   L_vartnn: Liste_variables_typees non-nil */
-%token <NO> I B V DEF DEP IDPROC IDFUNC MP AF SK NEWAR SE IND IF TH EL VAR WH DO PL MO MU AND OR NOT LT EQ 
-%token <TYP> T_INT T_ERR T_AR T_CMD T_BOO
+%token <NO> I B V DEF DEP IDPROC IDFUNC MP AF SK NEWAR SE IND IF TH EL VAR WH DO PL MO MU AND OR NOT LT EQ T_CMD T_AR
+%token <TYP> T_INT T_ERR T_BOO
 
 /* Unités lexicales<NO>: Integer Variable Main_prog                            */
 /* Affectation Skip NewArrayOf                                                 */
@@ -47,31 +48,36 @@ expr:   expr PL T   { $$=Nalloc();
                       $$->FG=$1;
                       $$->FD=$3;
                       $$->ETIQ=malloc(2);
-                      strcpy($$->ETIQ,"+"); }
+                      strcpy($$->ETIQ,"+");
+		      calcul_type(benvty, $$ , ligcour);}
         | expr MO T { $$=Nalloc();
                       $$->codop=MO;
                       $$->FG=$1;
                       $$->FD=$3;
                       $$->ETIQ=malloc(2);
-                      strcpy($$->ETIQ,"-"); }
+                      strcpy($$->ETIQ,"-"); 
+		      calcul_type(benvty, $$ , ligcour);}
         | expr OR T { $$=Nalloc();
                       $$->codop=OR;
                       $$->FG=$1;
                       $$->FD=$3;
                       $$->ETIQ=malloc(2);
-                      strcpy($$->ETIQ,"Or"); }
+                      strcpy($$->ETIQ,"Or");
+		      calcul_type(benvty, $$ , ligcour); }
         | expr LT T { $$=Nalloc();
                       $$->codop=LT;
                       $$->FG=$1;
                       $$->FD=$3;
                       $$->ETIQ=malloc(2);
-                      strcpy($$->ETIQ,"Lt"); }
+                      strcpy($$->ETIQ,"Lt");
+		      calcul_type(benvty, $$ , ligcour); }
         | expr EQ T { $$=Nalloc();
                       $$->codop=EQ;
                       $$->FG=$1;
                       $$->FD=$3;
                       $$->ETIQ=malloc(2);
-                      strcpy($$->ETIQ,"Eq"); }
+                      strcpy($$->ETIQ,"Eq"); 
+		      calcul_type(benvty, $$ , ligcour);}
         | T         { $$=$1; };
 
 T:      T MU  F     { $$=Nalloc();
@@ -79,24 +85,28 @@ T:      T MU  F     { $$=Nalloc();
                       $$->FG=$1;
                       $$->FD=$3;
                       $$->ETIQ=malloc(2);
-                      strcpy($$->ETIQ,"*"); }
+                      strcpy($$->ETIQ,"*");
+		      calcul_type(benvty, $$ , ligcour); }
         | T AND F   { $$=Nalloc();
                       $$->codop=AND;
                       $$->FG=$1;
                       $$->FD=$3;
                       $$->ETIQ=malloc(2);
-                      strcpy($$->ETIQ,"And"); }
+                      strcpy($$->ETIQ,"And");
+		      calcul_type(benvty, $$ , ligcour); }
         | NOT F     { $$=Nalloc();
                       $$->codop=NOT;
                       $$->FG=$2;
                       $$->FD=NULL;
                       $$->ETIQ=malloc(2);
-                      strcpy($$->ETIQ,"Not"); }
+                      strcpy($$->ETIQ,"Not");
+		      calcul_type(benvty, $$ , ligcour); }
         | F         { $$=$1; };
 
 F:      '(' expr ')'                    { $$=$2; }
         | I                             { $$=$1; } 
-        | V                             { $$=$1; }
+        | V                             { $$=$1; 
+					  calcul_type(benvty, $$ , ligcour);}
         | B                             { $$ = $1; }
         | V '(' block_expr ')'          { }
         | NEWAR type_decl '[' expr ']'  { $$=Nalloc();
@@ -111,18 +121,22 @@ F:      '(' expr ')'                    { $$=$2; }
 typed_expr: V  '[' expr ']'             { $$=Nalloc();/* un seul indice                        */
                                           $$->codop=IND;
                                           $$->FG=$1;
-                                          $$->FD=$3; }
+                                          $$->FD=$3;
+					  calcul_type(benvty, $$ , ligcour);
+					  calcul_type(benvty, $$ , ligcour); }
             | typed_expr '[' expr ']'   { $$=Nalloc();/* plusieurs indices                     */
                                           $$->codop=IND;
                                           $$->FG=$1;
-                                          $$->FD=$3; };
+                                          $$->FD=$3;
+					  calcul_type(benvty, $$ , ligcour); };
 
 cmd:        cmd SE atomic_cmd   { $$=Nalloc();      /* sequence */
                                   $$->codop=SE;
                                   $$->FG=$1;
                                   $$->FD=$3;
                                   $$->ETIQ=malloc(2);
-                                  strcpy($$->ETIQ,"Se"); }
+                                  strcpy($$->ETIQ,"Se");
+				  calcul_type(benvty, $$ , ligcour); }
             | atomic_cmd        { $$=$1; };
 
 atomic_cmd: typed_expr AF expr                  { $$=Nalloc();
@@ -130,13 +144,16 @@ atomic_cmd: typed_expr AF expr                  { $$=Nalloc();
                                                   $$->FG=$1;
                                                   $$->FD=$3;
                                                   $$->ETIQ=malloc(2);
-                                                  strcpy($$->ETIQ,"Af"); }
+                                                  strcpy($$->ETIQ,"Af");
+						  calcul_type(benvty, $$ , ligcour); }
             | V AF expr                         { $$=Nalloc();
                                                   $$->codop=AF;
                                                   $$->FG=$1;
                                                   $$->FD=$3;
                                                   $$->ETIQ=malloc(2);
-                                                  strcpy($$->ETIQ,"Af"); }
+                                                  strcpy($$->ETIQ,"Af");
+						  calcul_type(benvty, $$ , ligcour);
+						  calcul_type(benvty, $$ , ligcour); }
             | SK                                { $$=$1; }
             | '{' cmd '}'                       { $$=$2; }
             | IF expr TH cmd  EL atomic_cmd     { $$=Nalloc();
@@ -147,13 +164,15 @@ atomic_cmd: typed_expr AF expr                  { $$=Nalloc();
                                                   $$->FD->FG=$4;     /* branche true  */
                                                   $$->FD->FD=$6;     /* branche false */
                                                   $$->ETIQ=malloc(2);
-                                                  strcpy($$->ETIQ,"IfThEl"); }
+                                                  strcpy($$->ETIQ,"IfThEl");
+						  calcul_type(benvty, $$ , ligcour);}
             | WH expr DO atomic_cmd             { $$=Nalloc();
                                                   $$->codop=WH;
                                                   $$->FG=$2;         /* condition d'entree dans le while */
                                                   $$->FD=$4;         /* corps du while                   */
                                                   $$->ETIQ=malloc(2);
-                                                  strcpy($$->ETIQ,"Wh"); }
+                                                  strcpy($$->ETIQ,"Wh");
+						  calcul_type(benvty, $$ , ligcour);}
             | V '(' block_expr ')'              { };
 
 block_expr: %empty                      { }
@@ -192,12 +211,12 @@ list_def:   %empty              { }
 #include "lex.yy.c"
 
 
-  /*  pour tester l'analyse */
-//int main(int argn, char **argv)
-//{yyparse();
-//  ecrire_prog(benvty,syntree);
-//  return(1);
-//}
+/*  /*  pour tester l'analyse 
+int main(int argn, char **argv)
+{yyparse();
+ ecrire_prog(benvty,syntree);
+ return(1);
+}*/
 
 
 
@@ -207,6 +226,14 @@ int main(int argn, char **argv)
   yyparse();
   ecrire_prog(benvty,syntree);
   init_memoire();
+  type terr=creer_type(0,T_ERR);
+  type tcom= creer_type(0,T_CMD);
+  if (type_eq(syntree->typno,terr))
+    return printf("erreur de typage\n");
+  else if (type_eq(syntree->typno,tcom))
+    printf("programme bien type\n");
+  else
+    return printf("attention: typage incomplet\n");
   printf("Les variables globales avant exec:\n");
   printf("------------------------:\n");
   ecrire_bilenvty(benvty); printf("\n");
