@@ -206,6 +206,7 @@ list_def:   %empty              { }
 int main(int argn, char **argv)
 {//ligcour=0;
   yyparse();
+ecrire_prog(benvty,syntree);
   BILQUAD c3a;
   c3a = pp2quad(syntree);
   ecrire_sep_bilquad(c3a);

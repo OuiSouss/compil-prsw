@@ -363,10 +363,47 @@ BILQUAD pp2quad(NOE ec)
                 bil_res = creer_bilquad(nquad);
                 break;
             }
-            case IND:
-            {
-                break;
-            }
+//            case IND:
+//            {
+//                netiq=gensym("ET");newop=IND;
+//                bil_fg = pp2quad(ec->FG);
+//                bil_fd = pp2quad(ec->FD);
+//                narg1 = Idalloc();
+//                if(ec->FG->codop != V)
+//                    strcpy(narg1, bil_fg.fin->RES);
+//                else
+//                    strcpy(narg1, ec->FG->ETIQ);
+//                narg2 = Idalloc();
+//                if(ec->FD->codop != V)
+//                    strcpy(narg2, bil_fd.fin->RES);
+//                else
+//                    strcpy(narg2, ec->FD->ETIQ);
+//                nres = Idalloc();
+//                sprintf(nres, "%s[%s]", narg1, narg2);
+//                t.DIM = 1;
+//                t.TYPEF = ec->typno.TYPEF;
+//                narg1=Idalloc();sprintf(narg1,"%s",ec->ETIQ);
+//                narg2=NULL;nres=gensym("CT");
+//                /* on insere le nom de const dans l' environnement */
+//                inbilenvty(&benvty, nres, t);
+//                /* le quadruplet: ETnum, Afc, chaineconst,-, CTnum */
+//                nquad=creer_quad(netiq,newop,narg1,narg2,nres);
+//                bil_res=creer_bilquad(nquad);
+//                break;
+//            }
+//            case NEWAR:
+//            {
+//                netiq = gensym("ET"); newop = AFIND;
+//                bil_fd=pp2quad(ec->FD);
+//                narg1 = ec->FG->ETIQ;
+//                narg2=Idalloc();
+//                strcpy(narg2,bil_fd.fin->RES);
+//                nres=NULL;
+//                /* le quadruplet: ETnum, Af, chainevar1,chaineres2, NULL */
+//                nquad=creer_quad(netiq,newop,narg1,narg2,nres);
+//                bil_res=concatq(bil_fd,creer_bilquad(nquad));
+//                break;
+//            }
 //            case NEWAR:
 //            {
 //                netiq = gensym("ET"); newop = AFIND;
@@ -390,14 +427,33 @@ BILQUAD pp2quad(NOE ec)
             {
                 /* les ingredients */
                 netiq=gensym("ET");
-                newop=AF;
-                /* assert(ec->FG->codop==V); */
-                /* narg1= chaine en lhs */
-                narg1=ec->FG->ETIQ;
-                /* narg2= adresse res du code du rhs */
-                bil_fd=pp2quad(ec->FD);
-                narg2=Idalloc();
-                strcpy(narg2,bil_fd.fin->RES);
+                switch (ec->FG->codop)
+                {
+                    case V:
+                    {
+                        newop = AF;
+                        narg1 = ec->FG->ETIQ;
+                        /* narg2= adresse res du code du rhs */
+                        break;
+                    }
+                    case IND:
+                    {
+                        newop = AFIND;
+                        bil_fg = pp2quad(ec->FG);
+                        narg1 = Idalloc();
+                        strcpy(narg1, bil_fg.fin->ETIQ);
+                        break;
+                    }
+                    case NEWAR:
+                    {
+                        newop = AF;
+                        narg1 = ec->FG->ETIQ;
+                    }
+                    bil_fd = pp2quad(ec->FD);
+                    narg2 = Idalloc();
+                    strcpy(narg2, bil_fd.fin->ETIQ);
+                    break;
+                }
                 nres=NULL;
                 /* le quadruplet: ETnum, Af, chainevar1,chaineres2, NULL */
                 nquad=creer_quad(netiq,newop,narg1,narg2,nres);
