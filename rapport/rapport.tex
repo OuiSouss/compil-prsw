@@ -1,4 +1,5 @@
 \documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[french]{babel}
 
@@ -20,15 +21,45 @@
 \section{Introduction}
 Le but de ce projet était de réaliser, en groupe, un analyseur syntaxique du langage Pseudo-Pascal, un analyseur sémantique, un interpréteur, un compilateur de Pseudo-Pascal vers C3A et enfin un interpréteur C3A.
 \par
-Dans les parties qui suivent nous allons détailler ce qui a été fait et comment nous l'avons fait, avant de traiter des différents problèmes rencontrés lors du projet.
+Dans les parties qui suivent nous allons détailler ce qui a été fait et comment nous avons procédé, avant de traiter des différents problèmes rencontrés lors du projet.
+
+
+
+
 \section{Analyse syntaxique}
-Pour l'analyse syntaxique, nous avons repris le travail réalisé lors du TD concernant les tableaux. Nous avons ensuite modifié le lexer et le fichier Bison pour obtenir la grammaire voulue.
+Pour l'analyse syntaxique, nous avons repris le travail réalisé lors du TD concernant les tableaux. 
+
+\subsection{La grammaire}
+Nous avons ensuite modifié le lexer et le fichier Bison pour obtenir la grammaire voulue. Nos conventions d'écriture sont les suivantes, les non-terminaux sont écrits en lettres minuscules et les ternimaux exclusivement en lettres majsucules. 
+La grammaire, fournie initialement dans le sujet de projet, était ambiguë. Pour pallier à ce problème, le non-terminal E de la grammaire initiale a été transformé en expr, term et fact des non-terminaux qui qualifient respectivement l'expression, le terme et le facteur. 
+\subsubsection{L'expression}
+L'expression est le dernier échellon de priorité des opérateurs donc elle englobe tous les opérateurs qui ont une faible priorité : Plus, Moins, Ou, Inférieur strictement, Egal. 
+Ce sont des terminaux écrits respectivement de cette manière dans notre grammaire : PL, MO, OR, EQ.
+\subsubsection{Le terme}
+Le terme répresente une plus forte priorité par rapport aux précédents. Il correspond aux opérateurs suivants : Multiplication, Et, Non.
+Ces opérateurs sont écrits de telles manières dans notre parser : MU, AND, NOT.  
+\subsubsection{Le facteur}
+Le facteur représente une expression parenthésée, un entier, un indentificateur de variable, un booléen, une déclaration de fonction, une déclaration de tableaux.
+
+
 \section{Analyse sémantique}
+
+
+
 \section{Interpréteur PP}
+
+
+
 \section{Compilateur PP vers C3A}
 Pour traduire un programme écrit en langage PP vers le langage C3A, nous sommes parti sur la base de la correction du compilateur IMP vers C3A réalisé lors du mini-projet.
+
+
 \section{Interpréteur C3A}
+
+
 \section{Problèmes rencontrés}
+
+
 \section{Conclusion}
 
 

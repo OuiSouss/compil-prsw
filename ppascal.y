@@ -21,11 +21,11 @@
 /* attributs NOE: noeud binaire (IfThEl est "binarise")                                */
 /* attributs TYP: contient un type                                                     */
 /* attributs LARGT: liste d'arguments types(var globales)                              */
-%type <NO> prog atomic_cmd cmd expr T F typed_expr list_def
+%type <NO> prog atomic_cmd cmd expr term fact typed_expr list_def
 %type <TYP> type_decl
 %type <LARGT> typed_arg block_decl_typed_var block_decl_non_nil_typed_var
-/* Non-terminaux MP Ca cmd expr T F Et type_decl Argt L_vart L_vartnn*/
-/* P:main_program; Ca:commande atomique; cmd:commande; expr:expression; T:terme; F:facteur;*/
+/* Non-terminaux MP Ca cmd expr term fact Et type_decl Argt L_vart L_vartnn*/
+/* P:main_program; Ca:commande atomique; cmd:commande; expr:expression; term:terme; fact:facteur;*/
 /* Et: expr tableau; */
 /* type_decl:TyPe; Argt:argument_type; */
 /* L_vart: Liste_variables_typees,   L_vartnn: Liste_variables_typees non-nil */
@@ -43,67 +43,67 @@ Type_int Type_erreur Type_indefini  Type_array Type_commande                   *
 %%
 prog:   block_decl_typed_var list_def cmd   { benvty=$1;syntree=$3;YYACCEPT; };
 
-expr:   expr PL T   { $$=Nalloc();
+expr:   expr PL term   { $$=Nalloc();
                       $$->codop=PL;
                       $$->FG=$1;
                       $$->FD=$3;
                       $$->ETIQ=malloc(2);
                       strcpy($$->ETIQ,"+");
 		      calcul_type(benvty, $$ , ligcour);}
-        | expr MO T { $$=Nalloc();
+        | expr MO term { $$=Nalloc();
                       $$->codop=MO;
                       $$->FG=$1;
                       $$->FD=$3;
                       $$->ETIQ=malloc(2);
                       strcpy($$->ETIQ,"-"); 
 		      calcul_type(benvty, $$ , ligcour);}
-        | expr OR T { $$=Nalloc();
+        | expr OR term { $$=Nalloc();
                       $$->codop=OR;
                       $$->FG=$1;
                       $$->FD=$3;
                       $$->ETIQ=malloc(2);
                       strcpy($$->ETIQ,"Or");
 		      calcul_type(benvty, $$ , ligcour); }
-        | expr LT T { $$=Nalloc();
+        | expr LT term { $$=Nalloc();
                       $$->codop=LT;
                       $$->FG=$1;
                       $$->FD=$3;
                       $$->ETIQ=malloc(2);
                       strcpy($$->ETIQ,"Lt");
 		      calcul_type(benvty, $$ , ligcour); }
-        | expr EQ T { $$=Nalloc();
+        | expr EQ term { $$=Nalloc();
                       $$->codop=EQ;
                       $$->FG=$1;
                       $$->FD=$3;
                       $$->ETIQ=malloc(2);
                       strcpy($$->ETIQ,"Eq"); 
 		      calcul_type(benvty, $$ , ligcour);}
-        | T         { $$=$1; };
+        | term         { $$=$1; };
 
-T:      T MU  F     { $$=Nalloc();
+term:      term MU  fact     { $$=Nalloc();
                       $$->codop=MU;
                       $$->FG=$1;
                       $$->FD=$3;
                       $$->ETIQ=malloc(2);
                       strcpy($$->ETIQ,"*");
 		      calcul_type(benvty, $$ , ligcour); }
-        | T AND F   { $$=Nalloc();
+        | term AND fact   { $$=Nalloc();
                       $$->codop=AND;
                       $$->FG=$1;
                       $$->FD=$3;
                       $$->ETIQ=malloc(2);
                       strcpy($$->ETIQ,"And");
 		      calcul_type(benvty, $$ , ligcour); }
-        | NOT F     { $$=Nalloc();
+        | NOT fact     { $$=Nalloc();
                       $$->codop=NOT;
                       $$->FG=$2;
                       $$->FD=NULL;
                       $$->ETIQ=malloc(2);
                       strcpy($$->ETIQ,"Not");
 		      calcul_type(benvty, $$ , ligcour); }
-        | F         { $$=$1; };
+        | fact         { $$=$1; };
 
-F:      '(' expr ')'                    { $$=$2; }
+fact:      '(' expr ')'                    { $$=$2; }
         | I                             { $$=$1; } 
         | V                             { $$=$1; 
 					  calcul_type(benvty, $$ , ligcour);}
