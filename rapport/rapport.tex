@@ -2,6 +2,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[french]{babel}
+\usepackage{moreverb}
 
 
 \title{Rapport Projet de Compilation}
@@ -11,6 +12,7 @@
 \begin{document}
 
 \maketitle
+\pagebreak
 \tableofcontents
 \pagebreak
 
@@ -22,8 +24,6 @@
 Le but de ce projet était de réaliser, en groupe, un analyseur syntaxique du langage Pseudo-Pascal, un analyseur sémantique, un interpréteur, un compilateur de Pseudo-Pascal vers C3A et enfin un interpréteur C3A.
 \par
 Dans les parties qui suivent nous allons détailler ce qui a été fait et comment nous avons procédé, avant de traiter des différents problèmes rencontrés lors du projet.
-
-
 
 
 \section{Analyse syntaxique}
@@ -39,13 +39,115 @@ Ce sont des terminaux écrits respectivement de cette manière dans notre gramma
 Le terme répresente une plus forte priorité par rapport aux précédents. Il correspond aux opérateurs suivants : Multiplication, Et, Non.
 Ces opérateurs sont écrits de telles manières dans notre parser : MU, AND, NOT.  
 \subsubsection{Le facteur}
-Le facteur représente une expression parenthésée, un entier, un indentificateur de variable, un booléen, une déclaration de fonction, une déclaration de tableaux.
+Le facteur représente une expression parenthésée, un entier, un indentificateur de variable, un booléen, une déclaration de fonction, une déclaration de tableaux. Les terminaux présent sont donc I pour l'entier, V pour un indentificateur de variable, B pour un booléen, NEWAR pour la déclaration d'un tableaux.
+\subsubsection{Les commandes}
+Afin de lever une ambiguïté due à la séquence SE, nous avons spécifié qu'une commande engendre une séquence d'une commande suivie d'une commande atomique. 
+Une commande atomique est soit une affectation AF, soit un skip SK, soit un if..then..else, IFTHEL avec une expression pour une commande ou une commande atomique, soit un while..do, WHDO avec une expression pour une commande atomique.
 
+
+Voici donc notre grammaire respectant celle du projet mais avec des noms de non-terminaux un peu plus explicites.
+
+\begin{verbatim}
+
+prog:   block_decl_typed_var list_def cmd  
+
+expr:   expr PL term   
+        | expr MO term 
+        | expr OR term 
+        | expr LT term 
+        | expr EQ term 
+        | term         
+
+term:      term MU  fact     
+        | term AND fact   
+        | NOT fact     
+        | fact         
+fact:      '(' expr ')'                  
+        | I                             
+        | V                             
+        | B                             
+        | V '(' block_expr ')'          
+        | NEWAR type_decl '[' expr ']'  
+        | typed_expr                    
+
+typed_expr: V  '[' expr ']'             
+            | typed_expr '[' expr ']'   
+
+cmd:        cmd SE atomic_cmd   
+            | atomic_cmd        
+atomic_cmd: typed_expr AF expr                  
+            | V AF expr                         
+            | SK                                
+            | '{' cmd '}'                       
+            | IF expr TH cmd  EL atomic_cmd     
+            | WH expr DO atomic_cmd             
+            | V '(' block_expr ')'              
+
+block_expr: %empty                      
+            | block_non_nil_typed_expr  
+
+block_non_nil_typed_expr:   expr                                
+                            | expr ',' block_non_nil_typed_expr 
+
+typed_arg:      V ':' type_decl         
+
+/* un type */
+type_decl:      T_BOO               
+                | T_INT             
+                | T_AR type_decl    
+
+block_decl_typed_var:   %empty                          
+                        | block_decl_non_nil_typed_var  
+
+block_decl_non_nil_typed_var:   VAR typed_arg                                       
+                                | block_decl_non_nil_typed_var ',' VAR typed_arg    
+
+block_def_proc:     DEP IDPROC '(' block_expr ')'               
+block_def_func:     DEF IDFUNC '(' block_expr ')' ':' type_decl 
+
+decl_def:   block_def_proc block_decl_typed_var cmd     
+            | block_def_func block_decl_typed_var cmd   
+
+list_def:   %empty              
+            | list_def decl_def 
+
+\end{verbatim}
+\pagebreak
+Par conséquent, nous allons vous détailler la liste des non-terminaux.
+
+\begin{itemize}
+\item prog : programme principal
+\item block\_decl\_typed\_var : bloc de déclaration de variables typées
+\item list\_def : liste de définition de fonctions ou procédures
+\item cmd : une commande
+\item expr : une expression sur un entier, un booléen ou un tableau
+\item term : terme d'une expression
+\item fact : facteur d'une expression
+\item block\_expr : bloc d'expression 
+\item type\_decl : type déclaré
+\item typed\_expr : expression typée
+\item atomic\_cmd : commande atomique (commande non décomposable)
+\item block\_non\_nil\_typed\_expr : bloc de variables typées non nulles
+\item typed\_arg : argument typé
+\item block\_decl\_non\_nil\_typed\_var : bloc de déclaration de variables typées non nulles
+\item block\_def\_proc : bloc de définition de procédures
+\item block\_def\_func : bloc de définition de fonctions
+\item decl\_def : définition d'une fonction ou procédure
+\end{itemize}
+
+\pagebreak
 
 \section{Analyse sémantique}
+Nous avons repris les TP sur l'analyse sémantique et la gestion des tableaux.
 
+Donc, nous utilisons les modules Arbre et Anasem.
 
+\subsection{Module Arbre}
+Ce module permet de gérer l'environnement du programme par le biais d'une biliste. On peut donc créer des noeuds pour construire un arbre syntaxique abstrait afin de renvoyer celui-ci lorsque l'analyse sémantique est terminée.
+\subsection{Module Anasem}
+Le module Anasem, nous permet de gérer les types. Nous renvoyons une erreur lorsque l'on constate une incohérence de typage.
 
+\pagebreak
 \section{Interpréteur PP}
 L'interpréteur de Pseudo Pascal va recevoir un arbre de syntaxe abstraite ainsi que l'environnement qui lui est associé et en produire une interprétation.
 Cette tâche est réalisée par le module interp.
@@ -57,30 +159,32 @@ Afin d'interpréter correctement le pseudo pascal, il est necéssaire d'évaluer
 En effet, certains noeuds comme ceux impliquant des calculs peuvent subir une évaluation en vue d'être réduit.
 Cela signifie que après évaluation tout noeud dont la réduction aura été possible pourra être affiché.
 De ce fait, l'interprétation effectuera tout calcul possible afin de décrire l'état de la mémoire, des variables au moment de la fin du programme.
+\pagebreak
 \section{Compilateur PP vers C3A}
 Pour traduire un programme écrit en langage PP vers le langage C3A, nous sommes parti sur la base de la correction du compilateur IMP vers C3A réalisé lors du mini-projet.
 Afin de produire du code c3a, il est necéssaire de reprendre la structure en arbre utilisée au cours des étapes précédentes en vue de la revoir.
 Le code à 3 adresses est caractérisé par une liste de quadruplets qui illustrent le modèle vu en cours :
 Etiquette: Opérateur: Argument1: Argument2: Résultat.
+\par
 Chaque opération recevra ou non des arguments enregistrés dans le quadruplet (un argument pouvant correspondre à l'étiquette d'un autre quadruplet, notamment pour l'initialisation d'une variable).
 Elle pourra également transmettre ou non un résultat pouvant ensuite être utilisé par d'autres opérations ou référencé au sein d'autres quadruplets.
 Afin de permettre une clarification du produit de l'analyse syntaxique, le code à 3 adresse va également référencer toute étape implicite requise par le programme.
 Ainsi, lorsqu'une variable sera initialisée, du code à 3 adresses illustrant le chargement de la valeur dans un registre en vue d'une affectation sera produit.
 Cela signifie qu'un noeud correspondant à une expression terminale (telle que l'affectation d'un numéral à une variable) équivaudra à 2 instructions en c3a.
-
+\pagebreak
 \section{Interpréteur C3A}
 Après traduction d'un programme PP en du code à 3 adresses, l'interpréteur sera en mesure d'afficher la biliste de quadruplets correspondant au programme analysé et traduit.
 Cette interprétation prenant en compte les étapes implicites que le code d'orinine ne déclare pas, l'interpréteur recevra une liste au sein de laquelle ces instructions supplémentaires seront intégrées avant l'instruction traduite du PP.
 Le référencement des variables, constantes et états de l'automate repose sur un compteur similaire à un compteur ordinal.
 Celui-ci permettra de retracer la pile des appels engendrés par une instruction.
 Par exemple, une affectation d'un numéral dans une variable sera représentée par des instructions dont la dernière (l'affectation finale) aura une valeur de compteur la plus faible.
-
+\pagebreak
 \section{Problèmes rencontrés}
-
-
+Le principal problème rencontré est la gestion des fonctions et des procédures. Etant donné que nous avons pas réussi à créer un parser fonctionnel avec celles-ci, et par manque de temps, nous avons, par conséquent décidé de travailler sur un \og pseudo-pseudo-pascal \fg{} qui ne prend pas en compte les fonctions et procédure. Néanmoins, en dehors de ce point problématique, nous avons respecté la définition du langage pseudo-pascal du projet.
+\pagebreak
 \section{Conclusion}
 
-
+Ce projet de compilation, nous a permis d'intégrer toutes les spécificités vues en cours concernant la réalisation d'un compilateur et d'un interpréteur pour un langage donné. 
 
 
 
